@@ -9,6 +9,9 @@ pubspec.lock
 .DS_Store
 notes/
 
+# Shown in the README from GitHub; too big to ship in the package
+doc/demo.gif
+
 # Separate package, published on its own
 /dto_logger_generator/*
 tool/

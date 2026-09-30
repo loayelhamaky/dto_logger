@@ -2,6 +2,8 @@
 
 Debug-only logging and safe type coercion for JSON DTOs in Flutter/Dart.
 
+![dto_logger demo](https://raw.githubusercontent.com/loayelhamaky/dto_logger/main/doc/demo.gif)
+
 For every model you parse, it shows what the API actually sent:
 nulls, missing keys, type mismatches, coerced values, and fields your model never reads.
 It never throws on bad data, except for required fields: non-nullable fields without a default, or fields marked required.

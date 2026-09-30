@@ -1,3 +1,8 @@
+## 2.0.1
+
+- README: a demo of every feature at the top.
+- Package page: a screenshot.
+
 ## 2.0.0
 
 ### Breaking
