@@ -1,10 +1,7 @@
 import 'package:test/test.dart';
-import '../lib/src/case_converter.dart';
+import 'package:dto_logger/src/case_converter.dart';
 
 void main() {
-  // ===========================================================================
-  // snakeToCamel
-  // ===========================================================================
   group('snakeToCamel', () {
     group('basic conversions', () {
       test('converts user_name to userName', () {
@@ -24,8 +21,8 @@ void main() {
       });
 
       test('converts updated_at_time to updatedAtTime', () {
-        expect(
-            CaseConverter.snakeToCamel('updated_at_time'), equals('updatedAtTime'));
+        expect(CaseConverter.snakeToCamel('updated_at_time'),
+            equals('updatedAtTime'));
       });
 
       test('converts is_active to isActive', () {
@@ -33,8 +30,8 @@ void main() {
       });
 
       test('converts has_permission to hasPermission', () {
-        expect(
-            CaseConverter.snakeToCamel('has_permission'), equals('hasPermission'));
+        expect(CaseConverter.snakeToCamel('has_permission'),
+            equals('hasPermission'));
       });
 
       test('converts phone_number_verified to phoneNumberVerified', () {
@@ -82,7 +79,8 @@ void main() {
         expect(CaseConverter.snakeToCamel('___triple'), equals('triple'));
       });
 
-      test('removes leading underscore with compound name: _user_name -> userName',
+      test(
+          'removes leading underscore with compound name: _user_name -> userName',
           () {
         expect(CaseConverter.snakeToCamel('_user_name'), equals('userName'));
       });
@@ -117,9 +115,7 @@ void main() {
         expect(CaseConverter.snakeToCamel('a___b'), equals('aB'));
       });
 
-      test(
-          'mixed multiple underscores: one__two___three -> oneTwoThree',
-          () {
+      test('mixed multiple underscores: one__two___three -> oneTwoThree', () {
         expect(CaseConverter.snakeToCamel('one__two___three'),
             equals('oneTwoThree'));
       });
@@ -145,8 +141,8 @@ void main() {
       });
 
       test('HTTP_RESPONSE -> httpResponse', () {
-        expect(
-            CaseConverter.snakeToCamel('HTTP_RESPONSE'), equals('httpResponse'));
+        expect(CaseConverter.snakeToCamel('HTTP_RESPONSE'),
+            equals('httpResponse'));
       });
 
       test('API_KEY -> apiKey', () {
@@ -201,8 +197,8 @@ void main() {
       });
 
       test('field123_value -> field123Value', () {
-        expect(
-            CaseConverter.snakeToCamel('field123_value'), equals('field123Value'));
+        expect(CaseConverter.snakeToCamel('field123_value'),
+            equals('field123Value'));
       });
     });
 
@@ -257,9 +253,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // camelToSnake
-  // ===========================================================================
   group('camelToSnake', () {
     group('basic conversions', () {
       test('userName -> user_name', () {
@@ -283,8 +276,8 @@ void main() {
       });
 
       test('hasPermission -> has_permission', () {
-        expect(
-            CaseConverter.camelToSnake('hasPermission'), equals('has_permission'));
+        expect(CaseConverter.camelToSnake('hasPermission'),
+            equals('has_permission'));
       });
 
       test('phoneNumberVerified -> phone_number_verified', () {
@@ -293,8 +286,8 @@ void main() {
       });
 
       test('updatedAtTime -> updated_at_time', () {
-        expect(
-            CaseConverter.camelToSnake('updatedAtTime'), equals('updated_at_time'));
+        expect(CaseConverter.camelToSnake('updatedAtTime'),
+            equals('updated_at_time'));
       });
     });
 
@@ -304,18 +297,19 @@ void main() {
       });
 
       test('HTTPResponse -> http_response', () {
-        expect(
-            CaseConverter.camelToSnake('HTTPResponse'), equals('http_response'));
+        expect(CaseConverter.camelToSnake('HTTPResponse'),
+            equals('http_response'));
       });
 
       test('getHTTPSUrl -> get_https_url', () {
-        expect(CaseConverter.camelToSnake('getHTTPSUrl'), equals('get_https_url'));
+        expect(
+            CaseConverter.camelToSnake('getHTTPSUrl'), equals('get_https_url'));
       });
 
       test('XMLHTTPRequest -> xmlhttp_request', () {
         // XML + HTTP + Request: all caps followed by caps with lower
-        expect(
-            CaseConverter.camelToSnake('XMLHTTPRequest'), equals('xmlhttp_request'));
+        expect(CaseConverter.camelToSnake('XMLHTTPRequest'),
+            equals('xmlhttp_request'));
       });
 
       test('myAPIKey -> my_api_key', () {
@@ -399,7 +393,8 @@ void main() {
       });
 
       test('item10Price -> item10_price', () {
-        expect(CaseConverter.camelToSnake('item10Price'), equals('item10_price'));
+        expect(
+            CaseConverter.camelToSnake('item10Price'), equals('item10_price'));
       });
 
       test('v2Api -> v2_api', () {
@@ -409,7 +404,8 @@ void main() {
       test('get2FACode -> get2_facode', () {
         // 2 is not uppercase, F is upper after digit, A is upper after upper
         // then C is upper after lower(o) -- let's just verify the actual output
-        expect(CaseConverter.camelToSnake('get2FACode'), equals('get2_fa_code'));
+        expect(
+            CaseConverter.camelToSnake('get2FACode'), equals('get2_fa_code'));
       });
     });
 
@@ -428,8 +424,8 @@ void main() {
       });
 
       test('UserResponse -> user_response', () {
-        expect(
-            CaseConverter.camelToSnake('UserResponse'), equals('user_response'));
+        expect(CaseConverter.camelToSnake('UserResponse'),
+            equals('user_response'));
       });
     });
 
@@ -439,8 +435,8 @@ void main() {
       });
 
       test('already_snake -> already_snake', () {
-        expect(
-            CaseConverter.camelToSnake('already_snake'), equals('already_snake'));
+        expect(CaseConverter.camelToSnake('already_snake'),
+            equals('already_snake'));
       });
     });
 
@@ -456,15 +452,14 @@ void main() {
       });
 
       test('hello123World -> hello123_world', () {
-        expect(
-            CaseConverter.camelToSnake('hello123World'), equals('hello123_world'));
+        expect(CaseConverter.camelToSnake('hello123World'),
+            equals('hello123_world'));
       });
     });
 
     group('long strings', () {
       test('handles very long camelCase string', () {
-        expect(
-            CaseConverter.camelToSnake('thisIsAVeryLongCamelCaseString'),
+        expect(CaseConverter.camelToSnake('thisIsAVeryLongCamelCaseString'),
             equals('this_is_a_very_long_camel_case_string'));
       });
     });
@@ -480,14 +475,11 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // snakeToPascal
-  // ===========================================================================
   group('snakeToPascal', () {
     group('basic conversions', () {
       test('user_response -> UserResponse', () {
-        expect(
-            CaseConverter.snakeToPascal('user_response'), equals('UserResponse'));
+        expect(CaseConverter.snakeToPascal('user_response'),
+            equals('UserResponse'));
       });
 
       test('first_name -> FirstName', () {
@@ -524,8 +516,8 @@ void main() {
 
     group('already PascalCase', () {
       test('UserResponse -> UserResponse', () {
-        expect(
-            CaseConverter.snakeToPascal('UserResponse'), equals('UserResponse'));
+        expect(CaseConverter.snakeToPascal('UserResponse'),
+            equals('UserResponse'));
       });
 
       test('MyClass -> MyClass', () {
@@ -535,8 +527,8 @@ void main() {
 
     group('already camelCase (no underscores)', () {
       test('userResponse -> UserResponse', () {
-        expect(
-            CaseConverter.snakeToPascal('userResponse'), equals('UserResponse'));
+        expect(CaseConverter.snakeToPascal('userResponse'),
+            equals('UserResponse'));
       });
 
       test('firstName -> FirstName', () {
@@ -568,8 +560,8 @@ void main() {
       });
 
       test('HTTP_RESPONSE -> HttpResponse', () {
-        expect(
-            CaseConverter.snakeToPascal('HTTP_RESPONSE'), equals('HttpResponse'));
+        expect(CaseConverter.snakeToPascal('HTTP_RESPONSE'),
+            equals('HttpResponse'));
       });
     });
 
@@ -589,8 +581,8 @@ void main() {
       });
 
       test('item_10_price -> Item10Price', () {
-        expect(
-            CaseConverter.snakeToPascal('item_10_price'), equals('Item10Price'));
+        expect(CaseConverter.snakeToPascal('item_10_price'),
+            equals('Item10Price'));
       });
     });
 
@@ -611,9 +603,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // isValidIdentifier
-  // ===========================================================================
   group('isValidIdentifier', () {
     group('valid identifiers', () {
       test('simple name is valid', () {
@@ -733,9 +722,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // toValidIdentifier
-  // ===========================================================================
   group('toValidIdentifier', () {
     group('already valid input', () {
       test('simple name stays the same', () {
@@ -797,7 +783,8 @@ void main() {
 
     group('starts with number', () {
       test('123field -> field123field', () {
-        expect(CaseConverter.toValidIdentifier('123field'), equals('field123field'));
+        expect(CaseConverter.toValidIdentifier('123field'),
+            equals('field123field'));
       });
 
       test('1abc -> field1abc', () {
@@ -810,7 +797,8 @@ void main() {
 
       test('0_field -> field0Field', () {
         // 0_field -> snakeToCamel -> 0Field -> starts with digit -> field0Field
-        expect(CaseConverter.toValidIdentifier('0_field'), equals('field0Field'));
+        expect(
+            CaseConverter.toValidIdentifier('0_field'), equals('field0Field'));
       });
     });
 
@@ -860,7 +848,8 @@ void main() {
       });
 
       test('abstract -> abstract_', () {
-        expect(CaseConverter.toValidIdentifier('abstract'), equals('abstract_'));
+        expect(
+            CaseConverter.toValidIdentifier('abstract'), equals('abstract_'));
       });
 
       test('dynamic -> dynamic_', () {
@@ -887,7 +876,8 @@ void main() {
     });
 
     group('all special characters', () {
-      test('@#\$% -> field (all replaced with _, cleaned to empty, fallback)', () {
+      test('@#\$% -> field (all replaced with _, cleaned to empty, fallback)',
+          () {
         // All chars replaced with underscores -> '____'
         // snakeToCamel('____') returns '____' (all underscores)
         // Then it checks reserved words -> not reserved
@@ -910,12 +900,13 @@ void main() {
 
     group('snake_case input with special chars', () {
       test('user-name -> userName', () {
-        expect(CaseConverter.toValidIdentifier('user-name'), equals('userName'));
+        expect(
+            CaseConverter.toValidIdentifier('user-name'), equals('userName'));
       });
 
       test('content-type -> contentType', () {
-        expect(
-            CaseConverter.toValidIdentifier('content-type'), equals('contentType'));
+        expect(CaseConverter.toValidIdentifier('content-type'),
+            equals('contentType'));
       });
 
       test('X-Custom-Header -> xCustomHeader', () {
@@ -953,9 +944,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Round-trip / integration tests
-  // ===========================================================================
   group('round-trip conversions', () {
     test('snakeToCamel then camelToSnake returns original for simple case', () {
       const original = 'user_name';
@@ -971,7 +959,8 @@ void main() {
       expect(snake, equals(original));
     });
 
-    test('camelToSnake then snakeToCamel returns original for simple camel', () {
+    test('camelToSnake then snakeToCamel returns original for simple camel',
+        () {
       const original = 'userName';
       final snake = CaseConverter.camelToSnake(original);
       final camel = CaseConverter.snakeToCamel(snake);
@@ -994,8 +983,10 @@ void main() {
     });
 
     test('empty string round-trips are stable', () {
-      expect(CaseConverter.snakeToCamel(CaseConverter.camelToSnake('')), equals(''));
-      expect(CaseConverter.camelToSnake(CaseConverter.snakeToCamel('')), equals(''));
+      expect(CaseConverter.snakeToCamel(CaseConverter.camelToSnake('')),
+          equals(''));
+      expect(CaseConverter.camelToSnake(CaseConverter.snakeToCamel('')),
+          equals(''));
     });
 
     test('single word round-trips through camel and snake', () {
@@ -1006,12 +997,27 @@ void main() {
       expect(camel, equals('name'));
     });
 
-    test('toValidIdentifier always produces valid identifiers for random inputs',
+    test(
+        'toValidIdentifier always produces valid identifiers for random inputs',
         () {
       final inputs = [
-        '', '123', '@!#', 'hello world', 'my-field', 'class', 'for',
-        'null', '1abc', 'a.b.c', 'UPPER_CASE', '_private',
-        'Content-Type', 'X-Request-ID', '---', '   ', 'void',
+        '',
+        '123',
+        '@!#',
+        'hello world',
+        'my-field',
+        'class',
+        'for',
+        'null',
+        '1abc',
+        'a.b.c',
+        'UPPER_CASE',
+        '_private',
+        'Content-Type',
+        'X-Request-ID',
+        '---',
+        '   ',
+        'void',
       ];
       for (final input in inputs) {
         final result = CaseConverter.toValidIdentifier(input);
@@ -1021,9 +1027,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Additional edge cases for thoroughness
-  // ===========================================================================
   group('additional edge cases', () {
     group('snakeToCamel with mixed leading/trailing/inner underscores', () {
       test('_a_ -> a (leading + trailing underscores)', () {
@@ -1104,7 +1107,8 @@ void main() {
       });
 
       test('colon in input: key:value -> keyValue', () {
-        expect(CaseConverter.toValidIdentifier('key:value'), equals('keyValue'));
+        expect(
+            CaseConverter.toValidIdentifier('key:value'), equals('keyValue'));
       });
 
       test('equals sign: a=b -> aB', () {

@@ -1,10 +1,7 @@
-import '../lib/src/colors.dart';
+import 'package:dto_logger/src/colors.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // ===========================================================================
-  // ANSI Escape Code Constants
-  // ===========================================================================
   group('ANSI Escape Code Constants', () {
     group('Reset code', () {
       test('reset equals \\x1B[0m', () {
@@ -304,9 +301,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Helper Methods
-  // ===========================================================================
   group('Helper Methods', () {
     group('error()', () {
       test('wraps message with red and reset', () {
@@ -323,7 +317,8 @@ void main() {
       });
 
       test('contains the original message', () {
-        expect(AnsiColors.error('my error message'), contains('my error message'));
+        expect(
+            AnsiColors.error('my error message'), contains('my error message'));
       });
 
       test('works with empty string', () {
@@ -385,7 +380,8 @@ void main() {
     group('warning()', () {
       test('wraps message with yellow and reset', () {
         final result = AnsiColors.warning('caution');
-        expect(result, equals('${AnsiColors.yellow}caution${AnsiColors.reset}'));
+        expect(
+            result, equals('${AnsiColors.yellow}caution${AnsiColors.reset}'));
       });
 
       test('starts with yellow escape code', () {
@@ -446,7 +442,8 @@ void main() {
         final result = AnsiColors.highlight('important');
         expect(
           result,
-          equals('${AnsiColors.bold}${AnsiColors.white}important${AnsiColors.reset}'),
+          equals(
+              '${AnsiColors.bold}${AnsiColors.white}important${AnsiColors.reset}'),
         );
       });
 
@@ -526,7 +523,8 @@ void main() {
       });
 
       test('triple nesting works correctly', () {
-        final result = AnsiColors.error(AnsiColors.success(AnsiColors.info('deep')));
+        final result =
+            AnsiColors.error(AnsiColors.success(AnsiColors.info('deep')));
         expect(result, contains('deep'));
         expect(result, startsWith(AnsiColors.red));
         expect(result, endsWith(AnsiColors.reset));
@@ -534,9 +532,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Icon Methods
-  // ===========================================================================
   group('Icon Methods', () {
     group('errorIcon()', () {
       test('contains cross icon', () {
@@ -550,7 +545,8 @@ void main() {
       });
 
       test('contains the message text', () {
-        expect(AnsiColors.errorIcon('something broke'), contains('something broke'));
+        expect(AnsiColors.errorIcon('something broke'),
+            contains('something broke'));
       });
 
       test('works with empty message', () {
@@ -580,7 +576,8 @@ void main() {
       });
 
       test('contains the message text', () {
-        expect(AnsiColors.successIcon('all tests pass'), contains('all tests pass'));
+        expect(AnsiColors.successIcon('all tests pass'),
+            contains('all tests pass'));
       });
 
       test('works with empty message', () {
@@ -656,14 +653,12 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Type / Field / Value Indicators
-  // ===========================================================================
   group('Type/Field/Value Indicators', () {
     group('typeStr()', () {
       test('wraps type with magenta and reset', () {
         final result = AnsiColors.typeStr('String');
-        expect(result, equals('${AnsiColors.magenta}String${AnsiColors.reset}'));
+        expect(
+            result, equals('${AnsiColors.magenta}String${AnsiColors.reset}'));
       });
 
       test('starts with magenta', () {
@@ -733,9 +728,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Box Drawing Constants
-  // ===========================================================================
   group('Box Drawing Constants', () {
     test('boxTopLeft is correct Unicode character', () {
       expect(AnsiColors.boxTopLeft, equals('\u250C'));
@@ -797,9 +789,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // line() Method
-  // ===========================================================================
   group('line() Method', () {
     test('default width produces 50 characters', () {
       final result = AnsiColors.line();
@@ -855,9 +844,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // box() Method
-  // ===========================================================================
   group('box() Method', () {
     test('basic box with title and one line', () {
       final result = AnsiColors.box('Title', ['content']);
@@ -886,7 +872,8 @@ void main() {
     });
 
     test('box with lines of different lengths', () {
-      final result = AnsiColors.box('Diff', ['short', 'a much longer line here']);
+      final result =
+          AnsiColors.box('Diff', ['short', 'a much longer line here']);
       expect(result, contains('short'));
       expect(result, contains('a much longer line here'));
     });
@@ -955,14 +942,16 @@ void main() {
     });
 
     test('box with red color wraps structural elements', () {
-      final result = AnsiColors.box('Error', ['bad thing'], color: AnsiColors.red);
+      final result =
+          AnsiColors.box('Error', ['bad thing'], color: AnsiColors.red);
       expect(result, contains(AnsiColors.red));
       expect(result, contains('Error'));
       expect(result, contains('bad thing'));
     });
 
     test('box width adapts to longest line', () {
-      final result = AnsiColors.box('Hi', ['short', 'this is the longest line']);
+      final result =
+          AnsiColors.box('Hi', ['short', 'this is the longest line']);
       // The longest line is 'this is the longest line' (23 chars)
       // width = 23 + 4 = 27
       // Top border should have (27 - 2) = 25 horizontal chars

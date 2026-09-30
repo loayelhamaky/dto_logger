@@ -1,10 +1,7 @@
 import 'package:test/test.dart';
-import '../lib/src/json_to_dart.dart';
+import 'package:dto_logger/src/json_to_dart.dart';
 
 void main() {
-  // ===========================================================================
-  // GeneratorOptions
-  // ===========================================================================
   group('GeneratorOptions', () {
     test('default generateFromJson is true', () {
       const opts = GeneratorOptions();
@@ -38,7 +35,8 @@ void main() {
 
     test('default dtoLoggerImport is package:dto_logger/dto_logger.dart', () {
       const opts = GeneratorOptions();
-      expect(opts.dtoLoggerImport, equals('package:dto_logger/dto_logger.dart'));
+      expect(
+          opts.dtoLoggerImport, equals('package:dto_logger/dto_logger.dart'));
     });
 
     test('custom generateFromJson can be set to false', () {
@@ -77,7 +75,8 @@ void main() {
     });
 
     test('custom dtoLoggerImport can be set to custom value', () {
-      const opts = GeneratorOptions(dtoLoggerImport: 'package:custom/custom.dart');
+      const opts =
+          GeneratorOptions(dtoLoggerImport: 'package:custom/custom.dart');
       expect(opts.dtoLoggerImport, equals('package:custom/custom.dart'));
     });
 
@@ -106,9 +105,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // FieldInfo
-  // ===========================================================================
   group('FieldInfo', () {
     test('required fields must be provided', () {
       const field = FieldInfo(
@@ -230,9 +226,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // GeneratedClass
-  // ===========================================================================
   group('GeneratedClass', () {
     test('name stores correctly', () {
       const gc = GeneratedClass(
@@ -438,9 +431,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // JsonToDartGenerator - Field Type Analysis (allNullable=true)
-  // ===========================================================================
   group('JsonToDartGenerator - Field Type Analysis (allNullable=true)', () {
     late JsonToDartGenerator generator;
 
@@ -562,27 +552,37 @@ void main() {
     });
 
     test('list of int produces List<int>? type', () {
-      final result = generator.generate({'ids': [1, 2, 3]}, 'Test');
+      final result = generator.generate({
+        'ids': [1, 2, 3]
+      }, 'Test');
       expect(result.fields[0].type, equals('List<int>?'));
     });
 
     test('list of int produces isList=true', () {
-      final result = generator.generate({'ids': [1, 2, 3]}, 'Test');
+      final result = generator.generate({
+        'ids': [1, 2, 3]
+      }, 'Test');
       expect(result.fields[0].isList, isTrue);
     });
 
     test('list of double produces List<double>? type', () {
-      final result = generator.generate({'scores': [1.1, 2.2]}, 'Test');
+      final result = generator.generate({
+        'scores': [1.1, 2.2]
+      }, 'Test');
       expect(result.fields[0].type, equals('List<double>?'));
     });
 
     test('list of bool produces List<bool>? type', () {
-      final result = generator.generate({'flags': [true, false]}, 'Test');
+      final result = generator.generate({
+        'flags': [true, false]
+      }, 'Test');
       expect(result.fields[0].type, equals('List<bool>?'));
     });
 
     test('list of String produces List<String>? type', () {
-      final result = generator.generate({'tags': ['a', 'b']}, 'Test');
+      final result = generator.generate({
+        'tags': ['a', 'b']
+      }, 'Test');
       expect(result.fields[0].type, equals('List<String>?'));
     });
 
@@ -625,7 +625,9 @@ void main() {
       expect(result.fields[0].isList, isTrue);
     });
 
-    test('list where first element is non-standard type produces List<dynamic>?', () {
+    test(
+        'list where first element is non-standard type produces List<dynamic>?',
+        () {
       // A list where the first element is itself a list (not a Map)
       final result = generator.generate({
         'nested_lists': [
@@ -683,9 +685,7 @@ void main() {
     });
 
     test('nested map with empty object becomes Map<String, dynamic>', () {
-      final result = generator.generate({
-        'meta': <String, dynamic>{}
-      }, 'Test');
+      final result = generator.generate({'meta': <String, dynamic>{}}, 'Test');
       // An empty object tells us nothing, so no empty class is generated
       expect(result.fields[0].isNestedObject, isFalse);
       expect(result.fields[0].isMap, isTrue);
@@ -694,12 +694,16 @@ void main() {
     });
 
     test('list with single int element', () {
-      final result = generator.generate({'ids': [42]}, 'Test');
+      final result = generator.generate({
+        'ids': [42]
+      }, 'Test');
       expect(result.fields[0].type, equals('List<int>?'));
     });
 
     test('list with single string element', () {
-      final result = generator.generate({'tags': ['hello']}, 'Test');
+      final result = generator.generate({
+        'tags': ['hello']
+      }, 'Test');
       expect(result.fields[0].type, equals('List<String>?'));
     });
 
@@ -730,9 +734,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // JsonToDartGenerator - Field Type Analysis (allNullable=false)
-  // ===========================================================================
   group('JsonToDartGenerator - Field Type Analysis (allNullable=false)', () {
     late JsonToDartGenerator generator;
 
@@ -781,23 +782,31 @@ void main() {
     });
 
     test('list of int produces List<int> (no ?)', () {
-      final result = generator.generate({'ids': [1, 2, 3]}, 'Test');
+      final result = generator.generate({
+        'ids': [1, 2, 3]
+      }, 'Test');
       expect(result.fields[0].type, equals('List<int>'));
       expect(result.fields[0].nullable, isFalse);
     });
 
     test('list of double produces List<double> (no ?)', () {
-      final result = generator.generate({'scores': [1.1, 2.2]}, 'Test');
+      final result = generator.generate({
+        'scores': [1.1, 2.2]
+      }, 'Test');
       expect(result.fields[0].type, equals('List<double>'));
     });
 
     test('list of bool produces List<bool> (no ?)', () {
-      final result = generator.generate({'flags': [true, false]}, 'Test');
+      final result = generator.generate({
+        'flags': [true, false]
+      }, 'Test');
       expect(result.fields[0].type, equals('List<bool>'));
     });
 
     test('list of String produces List<String> (no ?)', () {
-      final result = generator.generate({'tags': ['a', 'b']}, 'Test');
+      final result = generator.generate({
+        'tags': ['a', 'b']
+      }, 'Test');
       expect(result.fields[0].type, equals('List<String>'));
     });
 
@@ -810,7 +819,8 @@ void main() {
       expect(result.fields[0].type, isNot(endsWith('?')));
     });
 
-    test('empty list still produces List<dynamic>? even with allNullable=false', () {
+    test('empty list still produces List<dynamic>? even with allNullable=false',
+        () {
       final result = generator.generate({'items': []}, 'Test');
       expect(result.fields[0].type, equals('List<dynamic>?'));
       expect(result.fields[0].nullable, isTrue);
@@ -822,9 +832,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Generated Code Quality - Class Structure
-  // ===========================================================================
   group('Generated Code Quality - Class Structure', () {
     late JsonToDartGenerator generator;
 
@@ -962,7 +969,7 @@ void main() {
 
     test('DtoLogger.parse wraps the builder', () {
       final result = generator.generate({'id': 1}, 'MyModel');
-      expect(result.code, contains("DtoLogger.parse(json, () => MyModel("));
+      expect(result.code, contains('DtoLogger.parse(json, () => MyModel('));
     });
 
     test('safeInt used for int fields', () {
@@ -1023,22 +1030,30 @@ void main() {
     });
 
     test('safeListOf used for list of primitives (int)', () {
-      final result = generator.generate({'ids': [1, 2, 3]}, 'Test');
+      final result = generator.generate({
+        'ids': [1, 2, 3]
+      }, 'Test');
       expect(result.code, contains("json.safeListOf<int>('ids')"));
     });
 
     test('safeListOf used for list of primitives (String)', () {
-      final result = generator.generate({'tags': ['a', 'b']}, 'Test');
+      final result = generator.generate({
+        'tags': ['a', 'b']
+      }, 'Test');
       expect(result.code, contains("json.safeListOf<String>('tags')"));
     });
 
     test('safeListOf used for list of primitives (double)', () {
-      final result = generator.generate({'scores': [1.1, 2.2]}, 'Test');
+      final result = generator.generate({
+        'scores': [1.1, 2.2]
+      }, 'Test');
       expect(result.code, contains("json.safeListOf<double>('scores')"));
     });
 
     test('safeListOf used for list of primitives (bool)', () {
-      final result = generator.generate({'flags': [true, false]}, 'Test');
+      final result = generator.generate({
+        'flags': [true, false]
+      }, 'Test');
       expect(result.code, contains("json.safeListOf<bool>('flags')"));
     });
 
@@ -1058,7 +1073,9 @@ void main() {
       expect(result.code, contains('    this.id,'));
     });
 
-    test('no fromJson and no toJson and no copyWith and no equality produces minimal class', () {
+    test(
+        'no fromJson and no toJson and no copyWith and no equality produces minimal class',
+        () {
       final gen = JsonToDartGenerator(
         options: const GeneratorOptions(
           generateFromJson: false,
@@ -1097,9 +1114,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // fromJson Code
-  // ===========================================================================
   group('fromJson Code', () {
     test('uses json.safeInt for int fields', () {
       final gen = JsonToDartGenerator();
@@ -1163,25 +1177,33 @@ void main() {
 
     test('uses json.safeListOf for list of int', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'ids': [1, 2]}, 'User');
+      final result = gen.generate({
+        'ids': [1, 2]
+      }, 'User');
       expect(result.code, contains("json.safeListOf<int>('ids')"));
     });
 
     test('uses json.safeListOf for list of String', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'names': ['a', 'b']}, 'User');
+      final result = gen.generate({
+        'names': ['a', 'b']
+      }, 'User');
       expect(result.code, contains("json.safeListOf<String>('names')"));
     });
 
     test('uses json.safeListOf for list of double', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'values': [1.0, 2.0]}, 'User');
+      final result = gen.generate({
+        'values': [1.0, 2.0]
+      }, 'User');
       expect(result.code, contains("json.safeListOf<double>('values')"));
     });
 
     test('uses json.safeListOf for list of bool', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'checks': [true, false]}, 'User');
+      final result = gen.generate({
+        'checks': [true, false]
+      }, 'User');
       expect(result.code, contains("json.safeListOf<bool>('checks')"));
     });
 
@@ -1190,7 +1212,7 @@ void main() {
         options: const GeneratorOptions(addLogging: true),
       );
       final result = gen.generate({'id': 1}, 'User');
-      expect(result.code, contains("DtoLogger.parse(json, () => User("));
+      expect(result.code, contains('DtoLogger.parse(json, () => User('));
     });
 
     test('DtoLogger.parse closing parentheses when addLogging=true', () {
@@ -1239,13 +1261,11 @@ void main() {
     test('factory constructor signature', () {
       final gen = JsonToDartGenerator();
       final result = gen.generate({'id': 1}, 'Test');
-      expect(result.code, contains('factory Test.fromJson(Map<String, dynamic> json)'));
+      expect(result.code,
+          contains('factory Test.fromJson(Map<String, dynamic> json)'));
     });
   });
 
-  // ===========================================================================
-  // toJson Code
-  // ===========================================================================
   group('toJson Code', () {
     test('primitive fields use simple key: value pattern', () {
       final gen = JsonToDartGenerator();
@@ -1274,7 +1294,7 @@ void main() {
           {'name': 'test'}
         ]
       }, 'Test');
-      expect(result.code, contains("?.map((e) => e.toJson()).toList()"));
+      expect(result.code, contains('?.map((e) => e.toJson()).toList()'));
     });
 
     test('toJson returns Map<String, dynamic>', () {
@@ -1322,7 +1342,9 @@ void main() {
 
     test('toJson with list of primitives uses simple pattern', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'tags': ['a', 'b']}, 'Test');
+      final result = gen.generate({
+        'tags': ['a', 'b']
+      }, 'Test');
       expect(result.code, contains("'tags': tags"));
       expect(result.code, isNot(contains("'tags': tags?.map")));
     });
@@ -1357,9 +1379,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // copyWith Code
-  // ===========================================================================
   group('copyWith Code', () {
     test('copyWith method has correct signature', () {
       final gen = JsonToDartGenerator(
@@ -1450,9 +1469,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // equality Code
-  // ===========================================================================
   group('equality Code', () {
     test('operator== checks identical first', () {
       final gen = JsonToDartGenerator(
@@ -1517,7 +1533,8 @@ void main() {
         options: const GeneratorOptions(generateEquality: true),
       );
       final result = gen.generate({'id': 1, 'name': 'test'}, 'Test');
-      expect(result.code, contains('int get hashCode => Object.hash(id, name);'));
+      expect(
+          result.code, contains('int get hashCode => Object.hash(id, name);'));
     });
 
     test('hashCode with 3 fields lists all', () {
@@ -1551,9 +1568,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Nested Objects
-  // ===========================================================================
   group('Nested Objects', () {
     test('single level nesting generates one nested class', () {
       final gen = JsonToDartGenerator();
@@ -1664,6 +1678,7 @@ void main() {
           collectNames(nested);
         }
       }
+
       collectNames(result);
       // All names should be unique
       expect(allNames.toSet().length, equals(allNames.length));
@@ -1682,7 +1697,8 @@ void main() {
       }, 'Root');
       expect(result.nestedClasses.length, equals(1));
       expect(result.nestedClasses[0].nestedClasses.length, equals(1));
-      expect(result.nestedClasses[0].nestedClasses[0].nestedClasses.length, equals(1));
+      expect(result.nestedClasses[0].nestedClasses[0].nestedClasses.length,
+          equals(1));
     });
 
     test('nested class from list of objects', () {
@@ -1719,7 +1735,9 @@ void main() {
       expect(fullCode, contains('class City {'));
     });
 
-    test('nested class with list of objects generates nested class for list item', () {
+    test(
+        'nested class with list of objects generates nested class for list item',
+        () {
       final gen = JsonToDartGenerator();
       final result = gen.generate({
         'department': {
@@ -1734,9 +1752,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Singularize behavior (tested through list of objects)
-  // ===========================================================================
   group('Singularize behavior (via list of objects)', () {
     late JsonToDartGenerator generator;
 
@@ -1875,9 +1890,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Snake_case to camelCase in field names
-  // ===========================================================================
   group('Snake_case to camelCase in field names', () {
     late JsonToDartGenerator generator;
 
@@ -1958,9 +1970,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Edge Cases
-  // ===========================================================================
   group('Edge Cases', () {
     test('empty JSON produces class with no fields', () {
       final gen = JsonToDartGenerator();
@@ -2162,9 +2171,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // _getSafeMethod (tested through generated code)
-  // ===========================================================================
   group('_getSafeMethod (via generated code)', () {
     late JsonToDartGenerator generator;
 
@@ -2207,9 +2213,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Code formatting and structure
-  // ===========================================================================
   group('Code formatting and structure', () {
     test('fromJson factory starts with proper indentation', () {
       final gen = JsonToDartGenerator();
@@ -2255,9 +2258,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Integration: Full class generation
-  // ===========================================================================
   group('Integration: Full class generation', () {
     test('complete class with all primitive types', () {
       final gen = JsonToDartGenerator();
@@ -2350,7 +2350,7 @@ void main() {
         options: const GeneratorOptions(addLogging: true),
       );
       final result = gen.generate({'id': 1, 'name': 'test'}, 'User');
-      expect(result.code, contains("return DtoLogger.parse(json, () => User("));
+      expect(result.code, contains('return DtoLogger.parse(json, () => User('));
       expect(result.code, contains("    ), 'User');"));
     });
 
@@ -2364,7 +2364,8 @@ void main() {
         'name': 'John',
       }, 'User');
       expect(result.code, contains("'profile': profile?.toJson()"));
-      expect(result.code, contains("'posts': posts?.map((e) => e.toJson()).toList()"));
+      expect(result.code,
+          contains("'posts': posts?.map((e) => e.toJson()).toList()"));
       expect(result.code, contains("'name': name"));
     });
 
@@ -2386,9 +2387,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Multiple fields - comma handling
-  // ===========================================================================
   group('Multiple fields - comma handling', () {
     test('single field in fromJson has no trailing comma', () {
       final gen = JsonToDartGenerator();
@@ -2430,9 +2428,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // GeneratedClass.name matches generated code
-  // ===========================================================================
   group('GeneratedClass.name consistency', () {
     test('result name matches class declaration', () {
       final gen = JsonToDartGenerator();
@@ -2462,31 +2457,36 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Empty list safeListOf type extraction
-  // ===========================================================================
   group('safeListOf type extraction', () {
     test('List<int>? extracts int for safeListOf', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'ids': [1, 2]}, 'Test');
+      final result = gen.generate({
+        'ids': [1, 2]
+      }, 'Test');
       expect(result.code, contains('safeListOf<int>'));
     });
 
     test('List<String>? extracts String for safeListOf', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'names': ['a']}, 'Test');
+      final result = gen.generate({
+        'names': ['a']
+      }, 'Test');
       expect(result.code, contains('safeListOf<String>'));
     });
 
     test('List<double>? extracts double for safeListOf', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'vals': [1.0]}, 'Test');
+      final result = gen.generate({
+        'vals': [1.0]
+      }, 'Test');
       expect(result.code, contains('safeListOf<double>'));
     });
 
     test('List<bool>? extracts bool for safeListOf', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({'flags': [true]}, 'Test');
+      final result = gen.generate({
+        'flags': [true]
+      }, 'Test');
       expect(result.code, contains('safeListOf<bool>'));
     });
 
@@ -2500,14 +2500,13 @@ void main() {
       final gen = JsonToDartGenerator(
         options: const GeneratorOptions(allNullable: false),
       );
-      final result = gen.generate({'ids': [1, 2]}, 'Test');
+      final result = gen.generate({
+        'ids': [1, 2]
+      }, 'Test');
       expect(result.code, contains('safeListOf<int>'));
     });
   });
 
-  // ===========================================================================
-  // Various constructor forms
-  // ===========================================================================
   group('Constructor forms', () {
     test('no fields: compact constructor', () {
       final gen = JsonToDartGenerator();
@@ -2557,9 +2556,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Warnings collection
-  // ===========================================================================
   group('Warnings collection', () {
     test('no warnings for normal fields', () {
       final gen = JsonToDartGenerator();
@@ -2608,9 +2604,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // copyWith edge cases
-  // ===========================================================================
   group('copyWith edge cases', () {
     test('copyWith with nested object field', () {
       final gen = JsonToDartGenerator(
@@ -2628,7 +2621,9 @@ void main() {
       final gen = JsonToDartGenerator(
         options: const GeneratorOptions(generateCopyWith: true),
       );
-      final result = gen.generate({'tags': ['a', 'b']}, 'User');
+      final result = gen.generate({
+        'tags': ['a', 'b']
+      }, 'User');
       expect(result.code, contains('copyWith'));
       expect(result.code, contains('tags: tags ?? this.tags'));
     });
@@ -2658,9 +2653,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // equality edge cases
-  // ===========================================================================
   group('equality edge cases', () {
     test('equality with snake_case field uses camelCase name', () {
       final gen = JsonToDartGenerator(
@@ -2701,9 +2693,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Generator reuse and state
-  // ===========================================================================
   group('Generator reuse and state', () {
     test('same generator can generate different classes', () {
       final gen = JsonToDartGenerator();
@@ -2734,9 +2723,6 @@ void main() {
     });
   });
 
-  // ===========================================================================
-  // Non-nullable nested and list types in code
-  // ===========================================================================
   group('Non-nullable nested and list types in code', () {
     test('non-nullable nested object type in field declaration', () {
       final gen = JsonToDartGenerator(

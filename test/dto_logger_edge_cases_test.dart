@@ -15,9 +15,6 @@ void main() {
     DtoLogConfig.maxReportsPerClass = 10;
   });
 
-  // ==========================================================================
-  // safeObject edge cases
-  // ==========================================================================
   group('safeObject edge cases', () {
     test('safeObject with non-map value logs typeMismatch', () {
       final json = <String, dynamic>{'data': 'not a map'};
@@ -67,8 +64,7 @@ void main() {
       };
 
       DtoLogger.parse(json, () {
-        final result = json.safeObject<Map<String, dynamic>>(
-            'data', (m) => m);
+        final result = json.safeObject<Map<String, dynamic>>('data', (m) => m);
         expect(result, isNotNull);
         expect(result!['id'], 1);
         return null;
@@ -76,16 +72,12 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // safeList edge cases
-  // ==========================================================================
   group('safeList edge cases', () {
     test('safeList with non-list value logs typeMismatch', () {
       final json = <String, dynamic>{'items': 'not a list'};
 
       DtoLogger.parse(json, () {
-        final result =
-            json.safeList('items', (m) => m);
+        final result = json.safeList('items', (m) => m);
         expect(result, isNull);
         return null;
       }, 'TestModel');
@@ -95,8 +87,7 @@ void main() {
       final json = <String, dynamic>{'items': null};
 
       DtoLogger.parse(json, () {
-        final result =
-            json.safeList('items', (m) => m);
+        final result = json.safeList('items', (m) => m);
         expect(result, isNull);
         return null;
       }, 'TestModel');
@@ -111,8 +102,7 @@ void main() {
       };
 
       DtoLogger.parse(json, () {
-        final result = json.safeList<Map<String, dynamic>>(
-            'items', (m) => m);
+        final result = json.safeList<Map<String, dynamic>>('items', (m) => m);
         expect(result, isNotNull);
         expect(result!.length, 2);
         return null;
@@ -120,9 +110,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // safeListOf edge cases
-  // ==========================================================================
   group('safeListOf edge cases', () {
     test('safeListOf<int> skips items that cannot become int', () {
       final json = <String, dynamic>{
@@ -160,9 +147,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // safeEnum edge cases
-  // ==========================================================================
   group('safeEnum edge cases', () {
     test('safeEnum with empty values list returns null', () {
       final json = <String, dynamic>{'status': 'active'};
@@ -174,7 +158,8 @@ void main() {
       }, 'TestModel');
     });
 
-    test('safeEnum with numeric value (int) converts to string for matching', () {
+    test('safeEnum with numeric value (int) converts to string for matching',
+        () {
       final json = <String, dynamic>{'status': 1};
 
       DtoLogger.parse(json, () {
@@ -206,16 +191,13 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // safeEnumOr edge cases
-  // ==========================================================================
   group('safeEnumOr edge cases', () {
     test('safeEnumOr returns fallback for unknown value', () {
       final json = <String, dynamic>{'status': 'unknown_value'};
 
       DtoLogger.parse(json, () {
-        final result = json.safeEnumOr(
-            'status', _TestEnum.values, _TestEnum.pending);
+        final result =
+            json.safeEnumOr('status', _TestEnum.values, _TestEnum.pending);
         expect(result, _TestEnum.pending);
         return null;
       }, 'TestModel');
@@ -225,8 +207,8 @@ void main() {
       final json = <String, dynamic>{'status': null};
 
       DtoLogger.parse(json, () {
-        final result = json.safeEnumOr(
-            'status', _TestEnum.values, _TestEnum.active);
+        final result =
+            json.safeEnumOr('status', _TestEnum.values, _TestEnum.active);
         expect(result, _TestEnum.active);
         return null;
       }, 'TestModel');
@@ -236,8 +218,8 @@ void main() {
       final json = <String, dynamic>{'status': 'active'};
 
       DtoLogger.parse(json, () {
-        final result = json.safeEnumOr(
-            'status', _TestEnum.values, _TestEnum.pending);
+        final result =
+            json.safeEnumOr('status', _TestEnum.values, _TestEnum.pending);
         expect(result, _TestEnum.active);
         return null;
       }, 'TestModel');
@@ -255,9 +237,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // safeMap edge cases
-  // ==========================================================================
   group('safeMap edge cases', () {
     test('safeMap with String value fails', () {
       final json = <String, dynamic>{'data': 'not a map'};
@@ -295,9 +274,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // safeXOr default value methods
-  // ==========================================================================
   group('safeXOr default value methods', () {
     test('safeIntOr returns default when null', () {
       final json = <String, dynamic>{'val': null};
@@ -340,9 +316,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // DtoLogConfig edge cases
-  // ==========================================================================
   group('DtoLogConfig edge cases', () {
     test('level=none suppresses all output', () {
       DtoLogConfig.level = DtoLogLevel.none;
@@ -395,9 +368,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // logJson edge cases
-  // ==========================================================================
   group('logJson edge cases', () {
     test('logJson with empty map does not crash', () {
       DtoLogger.logJson(<String, dynamic>{}, 'EmptyModel');
@@ -428,9 +398,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Multiple rapid parses - session stack integrity
-  // ==========================================================================
   group('Session stack integrity', () {
     test('nested DtoLogger.parse calls maintain separate sessions', () {
       final outerJson = <String, dynamic>{
@@ -461,9 +428,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // showJsonData edge cases
-  // ==========================================================================
   group('showJsonData', () {
     test('showJsonData with long string values truncates', () {
       DtoLogConfig.showJsonData = true;
@@ -479,9 +443,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // disabled logging still parses correctly
-  // ==========================================================================
   group('Disabled logging', () {
     test('DtoLogConfig.enabled=false still returns correct result', () {
       DtoLogConfig.enabled = false;

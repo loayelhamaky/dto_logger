@@ -2,9 +2,6 @@ import 'package:dto_logger/dto_logger.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // ==========================================================================
-  // SafeParser.asInt - infinity, NaN, overflow
-  // ==========================================================================
   group('SafeParser.asInt edge cases', () {
     test('asInt(double.infinity) fails safely instead of throwing', () {
       final result = SafeParser.asInt(double.infinity);
@@ -39,9 +36,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // SafeParser.asDouble - special string values
-  // ==========================================================================
   group('SafeParser.asDouble edge cases', () {
     test('asDouble("-0.0") parses as double', () {
       final result = SafeParser.asDouble('-0.0');
@@ -75,9 +69,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // SafeParser.asBool - non-0/1 ints
-  // ==========================================================================
   group('SafeParser.asBool edge cases', () {
     test('asBool(2) coerces to true', () {
       final result = SafeParser.asBool(2);
@@ -127,9 +118,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // SafeParser.asDateTime - negative/zero timestamps, unsupported types
-  // ==========================================================================
   group('SafeParser.asDateTime edge cases', () {
     test('asDateTime(-86400) - before epoch, treated as seconds', () {
       final result = SafeParser.asDateTime(-86400);
@@ -164,9 +152,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // SafeParser.asString - non-primitive inputs
-  // ==========================================================================
   group('SafeParser.asString edge cases', () {
     test('asString([1,2,3]) - list fails', () {
       final result = SafeParser.asString([1, 2, 3]);
@@ -201,9 +186,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // SafeParser.asList - invalid inputs
-  // ==========================================================================
   group('SafeParser.asList edge cases', () {
     test('asList with String value fails', () {
       final result = SafeParser.asList<int>('not a list', (e) => e as int);
@@ -233,9 +215,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // SafeParser.asMap - invalid inputs
-  // ==========================================================================
   group('SafeParser.asMap edge cases', () {
     test('asMap with List value fails', () {
       final result = SafeParser.asMap([1, 2, 3]);
@@ -263,9 +242,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // SafeParser._preview - truncation boundary (tested via error messages)
-  // ==========================================================================
   group('SafeParser._preview truncation boundary', () {
     test('50-char string is NOT truncated', () {
       final str = 'a' * 50;
@@ -291,9 +267,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // ParseResult factory constructors
-  // ==========================================================================
   group('ParseResult edge cases', () {
     test('ParseResult.ok stores value correctly', () {
       final r = ParseResult<int>.ok(42);
@@ -333,9 +306,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // inferType edge cases
-  // ==========================================================================
   group('SafeParser.inferType edge cases', () {
     test('inferType with empty map', () {
       expect(SafeParser.inferType({}), 'Map<String, dynamic>?');

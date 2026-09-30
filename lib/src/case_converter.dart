@@ -14,7 +14,7 @@ class CaseConverter {
   static final _startsWithDigit = RegExp(r'[0-9]');
 
   /// Converts snake_case to camelCase
-  /// 
+  ///
   /// Examples:
   /// - user_name → userName
   /// - _id → id (leading underscore removed)
@@ -34,18 +34,16 @@ class CaseConverter {
 
     // Remove leading underscores: _id → id, __private → private
     final clean = input.replaceFirst(_leadingUnderscores, '');
-    
+
     if (clean.isEmpty) return input; // Edge case: input was only underscores
 
-    // Split by underscore(s)
-    final parts = clean.split(_underscoreSplit).where((p) => p.isNotEmpty).toList();
-    
+    final parts =
+        clean.split(_underscoreSplit).where((p) => p.isNotEmpty).toList();
+
     if (parts.isEmpty) return input;
 
-    // First part: all lowercase
     final buffer = StringBuffer(parts[0].toLowerCase());
 
-    // Remaining parts: capitalize first letter
     for (int i = 1; i < parts.length; i++) {
       final part = parts[i].toLowerCase();
       if (part.isNotEmpty) {
@@ -93,7 +91,8 @@ class CaseConverter {
 
       if (isUpper && i > 0) {
         final prevChar = input[i - 1];
-        final prevIsUpper = prevChar.toUpperCase() == prevChar && prevChar.toLowerCase() != prevChar;
+        final prevIsUpper = prevChar.toUpperCase() == prevChar &&
+            prevChar.toLowerCase() != prevChar;
 
         // Add underscore if:
         // 1. Previous char was lowercase (normal camelCase boundary)
@@ -102,7 +101,8 @@ class CaseConverter {
           result.write('_');
         } else if (i + 1 < input.length) {
           final nextChar = input[i + 1];
-          final nextIsLower = nextChar.toLowerCase() == nextChar && nextChar.toUpperCase() != nextChar;
+          final nextIsLower = nextChar.toLowerCase() == nextChar &&
+              nextChar.toUpperCase() != nextChar;
           if (nextIsLower) {
             result.write('_');
           }
@@ -116,7 +116,7 @@ class CaseConverter {
   }
 
   /// Converts to PascalCase (for class names)
-  /// 
+  ///
   /// Examples:
   /// - user_response → UserResponse
   /// - _user → User
@@ -124,13 +124,13 @@ class CaseConverter {
   /// - UserResponse → UserResponse (already PascalCase)
   static String snakeToPascal(String input) {
     if (input.isEmpty) return input;
-    
+
     // If already contains uppercase, it might be camelCase or PascalCase
     // Check if it has underscores - if not, just capitalize first letter
     if (!input.contains('_')) {
       return input[0].toUpperCase() + input.substring(1);
     }
-    
+
     // Has underscores - convert from snake_case
     final camel = snakeToCamel(input);
     if (camel.isEmpty) return camel;
@@ -140,7 +140,7 @@ class CaseConverter {
   /// Checks if a string is valid Dart identifier
   static bool isValidIdentifier(String name) {
     if (name.isEmpty) return false;
-    
+
     // Must start with letter or underscore
     final firstChar = name[0];
     if (!firstChar.contains(RegExp(r'[a-zA-Z_]'))) return false;
@@ -160,7 +160,6 @@ class CaseConverter {
   static String toValidIdentifier(String input) {
     if (input.isEmpty) return 'field';
 
-    // Replace invalid characters with underscores
     String clean = input.replaceAll(_invalidChars, '_');
 
     // Convert to camelCase, then drop leading underscores:
@@ -168,29 +167,82 @@ class CaseConverter {
     clean = snakeToCamel(clean).replaceFirst(_leadingUnderscores, '');
     if (clean.isEmpty) return 'field';
 
-    // If starts with number, prefix with "field"
     if (_startsWithDigit.hasMatch(clean[0])) {
       clean = 'field$clean';
     }
-    
-    // Handle Dart reserved words
+
     if (_reservedWords.contains(clean)) {
       clean = '${clean}_';
     }
-    
+
     return clean.isEmpty ? 'field' : clean;
   }
 
   /// Dart reserved keywords that can't be used as identifiers
   static const Set<String> _reservedWords = {
-    'abstract', 'as', 'assert', 'async', 'await', 'break', 'case', 'catch',
-    'class', 'const', 'continue', 'covariant', 'default', 'deferred', 'do',
-    'dynamic', 'else', 'enum', 'export', 'extends', 'extension', 'external',
-    'factory', 'false', 'final', 'finally', 'for', 'Function', 'get', 'hide',
-    'if', 'implements', 'import', 'in', 'interface', 'is', 'late', 'library',
-    'mixin', 'new', 'null', 'on', 'operator', 'part', 'required', 'rethrow',
-    'return', 'sealed', 'set', 'show', 'static', 'super', 'switch', 'sync',
-    'this', 'throw', 'true', 'try', 'typedef', 'var', 'void', 'while', 'with',
+    'abstract',
+    'as',
+    'assert',
+    'async',
+    'await',
+    'break',
+    'case',
+    'catch',
+    'class',
+    'const',
+    'continue',
+    'covariant',
+    'default',
+    'deferred',
+    'do',
+    'dynamic',
+    'else',
+    'enum',
+    'export',
+    'extends',
+    'extension',
+    'external',
+    'factory',
+    'false',
+    'final',
+    'finally',
+    'for',
+    'Function',
+    'get',
+    'hide',
+    'if',
+    'implements',
+    'import',
+    'in',
+    'interface',
+    'is',
+    'late',
+    'library',
+    'mixin',
+    'new',
+    'null',
+    'on',
+    'operator',
+    'part',
+    'required',
+    'rethrow',
+    'return',
+    'sealed',
+    'set',
+    'show',
+    'static',
+    'super',
+    'switch',
+    'sync',
+    'this',
+    'throw',
+    'true',
+    'try',
+    'typedef',
+    'var',
+    'void',
+    'while',
+    'with',
     'yield',
   };
 }

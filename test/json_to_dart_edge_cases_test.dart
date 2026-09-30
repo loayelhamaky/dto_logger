@@ -2,9 +2,6 @@ import 'package:dto_logger/dto_logger.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // ==========================================================================
-  // _singularize edge cases
-  // ==========================================================================
   group('JsonToDartGenerator singularize (via list field names)', () {
     // We test singularize indirectly: when a list of objects is generated,
     // the nested class name is derived from the singularized field name.
@@ -86,17 +83,12 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Deeply nested empty objects
-  // ==========================================================================
   group('Deeply nested structures', () {
     test('deeply nested empty objects generate classes', () {
       final gen = JsonToDartGenerator();
       final result = gen.generate({
         'a': {
-          'b': {
-            'c': <String, dynamic>{}
-          }
+          'b': {'c': <String, dynamic>{}}
         }
       }, 'Deep');
 
@@ -117,9 +109,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Mixed-type lists
-  // ==========================================================================
   group('Mixed-type lists', () {
     test('list of mixed primitives - first element determines type', () {
       final gen = JsonToDartGenerator();
@@ -135,9 +124,7 @@ void main() {
 
     test('empty list → List<dynamic>', () {
       final gen = JsonToDartGenerator();
-      final result = gen.generate({
-        'items': <dynamic>[]
-      }, 'Empty');
+      final result = gen.generate({'items': <dynamic>[]}, 'Empty');
 
       final code = result.fullCode;
       expect(code, contains('List<dynamic>'));
@@ -156,9 +143,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Null JSON values
-  // ==========================================================================
   group('Null values in JSON', () {
     test('null value defaults to String? with warning', () {
       final gen = JsonToDartGenerator();
@@ -186,9 +170,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Empty JSON
-  // ==========================================================================
   group('Empty JSON', () {
     test('empty JSON object generates class with no fields', () {
       final gen = JsonToDartGenerator();
@@ -200,9 +181,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Single field JSON
-  // ==========================================================================
   group('Single field JSON', () {
     test('single int field', () {
       final gen = JsonToDartGenerator();
@@ -222,9 +200,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Generator with all options disabled
-  // ==========================================================================
   group('Generator options combinations', () {
     test('all generation disabled - still produces class shell', () {
       final gen = JsonToDartGenerator(
@@ -298,9 +273,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // GeneratorOptions defaults
-  // ==========================================================================
   group('GeneratorOptions defaults', () {
     test('default options have expected values', () {
       const opts = GeneratorOptions();
@@ -314,9 +286,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // FieldInfo properties
-  // ==========================================================================
   group('FieldInfo from generation', () {
     test('nested object field has correct flags', () {
       final gen = JsonToDartGenerator();
@@ -368,9 +337,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // snake_case field names → camelCase dart names
-  // ==========================================================================
   group('Field name conversion in generator', () {
     test('snake_case keys become camelCase field names', () {
       final gen = JsonToDartGenerator();
@@ -393,9 +359,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Class name collision avoidance
-  // ==========================================================================
   group('Class name collision', () {
     test('duplicate nested class names get suffix', () {
       final gen = JsonToDartGenerator();

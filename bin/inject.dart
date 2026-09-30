@@ -1,4 +1,5 @@
 #!/usr/bin/env dart
+
 // ignore_for_file: avoid_print
 /// CLI tool to inject .logged() into existing fromJson methods
 ///
@@ -7,6 +8,7 @@
 ///   dart run dto_logger:inject --dir lib/models/
 ///   dart run dto_logger:inject --dry-run
 ///   dart run dto_logger:inject --help
+library;
 
 import 'dart:io';
 
@@ -17,7 +19,6 @@ void main(List<String> args) {
   bool dryRun = false;
   bool showHelp = false;
 
-  // Parse args
   for (int i = 0; i < args.length; i++) {
     final arg = args[i];
     if (arg == '--help' || arg == '-h') {
@@ -39,16 +40,17 @@ void main(List<String> args) {
   _printHeader();
 
   if (dryRun) {
-    print('${AnsiColors.yellow}DRY RUN — no files will be modified${AnsiColors.reset}\n');
+    print(
+        '${AnsiColors.yellow}DRY RUN — no files will be modified${AnsiColors.reset}\n');
   }
 
   final dir = Directory(targetDir);
   if (!dir.existsSync()) {
-    print('${AnsiColors.red}✗ Directory not found: $targetDir${AnsiColors.reset}');
+    print(
+        '${AnsiColors.red}✗ Directory not found: $targetDir${AnsiColors.reset}');
     exit(1);
   }
 
-  // Collect stats
   int filesScanned = 0;
   int fromJsonFound = 0;
   int injected = 0;
@@ -58,7 +60,6 @@ void main(List<String> args) {
   int importsAdded = 0;
   final modifiedFiles = <String>[];
 
-  // Find all .dart files
   final files = dir
       .listSync(recursive: true)
       .whereType<File>()
@@ -75,7 +76,6 @@ void main(List<String> args) {
   for (final file in files) {
     var content = file.readAsStringSync();
 
-    // Find all fromJson methods
     final fromJsonPattern = RegExp(
       r'(?:factory\s+\w+\.fromJson|\w+\.fromJson|(?:static\s+)?\w+\s+fromJson)\s*\(\s*Map\s*<\s*String\s*,\s*dynamic\s*>\s+(\w+)\s*\)',
     );
@@ -176,29 +176,37 @@ void main(List<String> args) {
 
   // Summary
   print('');
-  print('${AnsiColors.cyan}╔════════════════════════════════════════╗${AnsiColors.reset}');
-  print('${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}DTO Logger — Inject ${dryRun ? "Preview" : "Complete"}${AnsiColors.reset}     ${AnsiColors.cyan}║${AnsiColors.reset}');
-  print('${AnsiColors.cyan}╚════════════════════════════════════════╝${AnsiColors.reset}');
+  print(
+      '${AnsiColors.cyan}╔════════════════════════════════════════╗${AnsiColors.reset}');
+  print(
+      '${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}DTO Logger — Inject ${dryRun ? "Preview" : "Complete"}${AnsiColors.reset}     ${AnsiColors.cyan}║${AnsiColors.reset}');
+  print(
+      '${AnsiColors.cyan}╚════════════════════════════════════════╝${AnsiColors.reset}');
   print('');
   print('${AnsiColors.dim}Files scanned:${AnsiColors.reset}    $filesScanned');
   print('${AnsiColors.dim}fromJson found:${AnsiColors.reset}   $fromJsonFound');
   print('${AnsiColors.green}✓ Injected:${AnsiColors.reset}       $injected');
   if (alreadyLogged > 0) {
-    print('${AnsiColors.yellow}⚠ Skipped:${AnsiColors.reset}        $alreadyLogged (already using dto_logger)');
+    print(
+        '${AnsiColors.yellow}⚠ Skipped:${AnsiColors.reset}        $alreadyLogged (already using dto_logger)');
   }
   if (inComments > 0) {
-    print('${AnsiColors.yellow}⚠ Skipped:${AnsiColors.reset}        $inComments (inside comments)');
+    print(
+        '${AnsiColors.yellow}⚠ Skipped:${AnsiColors.reset}        $inComments (inside comments)');
   }
   if (unsupported > 0) {
-    print('${AnsiColors.yellow}⚠ Skipped:${AnsiColors.reset}        $unsupported (unsupported shape, add .logged() by hand)');
+    print(
+        '${AnsiColors.yellow}⚠ Skipped:${AnsiColors.reset}        $unsupported (unsupported shape, add .logged() by hand)');
   }
   if (importsAdded > 0) {
-    print('${AnsiColors.cyan}+ Imports added:${AnsiColors.reset}  $importsAdded');
+    print(
+        '${AnsiColors.cyan}+ Imports added:${AnsiColors.reset}  $importsAdded');
   }
   print('');
 
   if (modifiedFiles.isNotEmpty) {
-    print('${AnsiColors.bold}${dryRun ? "Would modify" : "Modified"}:${AnsiColors.reset}');
+    print(
+        '${AnsiColors.bold}${dryRun ? "Would modify" : "Modified"}:${AnsiColors.reset}');
     for (final f in modifiedFiles) {
       print('  ${AnsiColors.green}✓${AnsiColors.reset} $f');
     }
@@ -206,9 +214,11 @@ void main(List<String> args) {
   }
 
   if (injected == 0 && fromJsonFound > 0 && alreadyLogged == fromJsonFound) {
-    print('${AnsiColors.dim}All fromJson methods already have logging.${AnsiColors.reset}\n');
+    print(
+        '${AnsiColors.dim}All fromJson methods already have logging.${AnsiColors.reset}\n');
   } else if (fromJsonFound == 0) {
-    print('${AnsiColors.dim}No fromJson methods found in $targetDir${AnsiColors.reset}\n');
+    print(
+        '${AnsiColors.dim}No fromJson methods found in $targetDir${AnsiColors.reset}\n');
   }
 }
 
@@ -255,7 +265,8 @@ bool _methodAlreadyLogged(String content, RegExpMatch match) {
     body = content.substring(braceStart, end);
   } else if (trimmed.startsWith('=>')) {
     final arrowStart = match.end + after.indexOf('=>');
-    final semiIndex = _findTerminatingSemicolon(content.substring(arrowStart + 2));
+    final semiIndex =
+        _findTerminatingSemicolon(content.substring(arrowStart + 2));
     if (semiIndex == -1) return false;
     body = content.substring(arrowStart, arrowStart + 2 + semiIndex);
   } else {
@@ -325,16 +336,17 @@ int _findTerminatingSemicolon(String code) {
 
 /// Check if the dto_logger import exists
 bool _hasImport(String content) {
-  return content.contains("package:dto_logger/dto_logger.dart") ||
-      content.contains("packages/dto_logger/lib/dto_logger.dart");
+  return content.contains('package:dto_logger/dto_logger.dart') ||
+      content.contains('packages/dto_logger/lib/dto_logger.dart');
 }
 
 /// Add the dto_logger import to the file
 String _addImport(String content) {
-  final importLine = "import 'package:dto_logger/dto_logger.dart';\n";
+  const importLine = "import 'package:dto_logger/dto_logger.dart';\n";
 
   // Find first import to add before it
-  final importMatch = RegExp('^import\\s+[\'"]', multiLine: true).firstMatch(content);
+  final importMatch =
+      RegExp('^import\\s+[\'"]', multiLine: true).firstMatch(content);
   if (importMatch != null) {
     return content.substring(0, importMatch.start) +
         importLine +
@@ -359,9 +371,12 @@ String _addImport(String content) {
 
 void _printHeader() {
   print('');
-  print('${AnsiColors.cyan}╔════════════════════════════════════════╗${AnsiColors.reset}');
-  print('${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}DTO Logger — Inject Tool${AnsiColors.reset}          ${AnsiColors.cyan}║${AnsiColors.reset}');
-  print('${AnsiColors.cyan}╚════════════════════════════════════════╝${AnsiColors.reset}');
+  print(
+      '${AnsiColors.cyan}╔════════════════════════════════════════╗${AnsiColors.reset}');
+  print(
+      '${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}DTO Logger — Inject Tool${AnsiColors.reset}          ${AnsiColors.cyan}║${AnsiColors.reset}');
+  print(
+      '${AnsiColors.cyan}╚════════════════════════════════════════╝${AnsiColors.reset}');
   print('');
 }
 
@@ -395,7 +410,7 @@ ${AnsiColors.cyan}WHAT IT DOES:${AnsiColors.reset}
   • Extra field detection (backend sends fields your model ignores)
   • Null warnings (api sent null for a field you accessed)
   • Suspicious type hints (String "123" that looks like int)
-  • Beautiful box-drawn output with timing
+  • Box-drawn output with timing
   • Zero overhead when logging is disabled
 
 ${AnsiColors.cyan}SAFE:${AnsiColors.reset}

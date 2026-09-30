@@ -1,5 +1,4 @@
-/// JSON to Dart class generator
-/// Generates CLEAN classes - all logging logic is in the package
+/// Generates Dart model classes from JSON samples.
 library;
 
 import 'case_converter.dart';
@@ -87,7 +86,7 @@ class GeneratedClass {
   }
 }
 
-/// Generates CLEAN Dart classes from JSON
+/// Generates Dart classes from JSON
 class JsonToDartGenerator {
   final GeneratorOptions options;
   final Set<String> _generatedClassNames = {};
@@ -269,9 +268,7 @@ class JsonToDartGenerator {
           ? value
           : (value as Map).map((k, v) => MapEntry(k.toString(), v));
 
-  // ═══════════════════════════════════════════════════════════════════════
   // Naming
-  // ═══════════════════════════════════════════════════════════════════════
 
   /// Keep the user's class name when it is already valid ("HTTPResponse"),
   /// otherwise sanitize it ("user response" → "UserResponse").
@@ -349,17 +346,13 @@ class JsonToDartGenerator {
     'toString',
   };
 
-  // ═══════════════════════════════════════════════════════════════════════
   // Code generation
-  // ═══════════════════════════════════════════════════════════════════════
 
   String _generateCode(String className, List<FieldInfo> fields) {
     final buffer = StringBuffer();
 
-    // Class declaration
     buffer.writeln('class $className {');
 
-    // Fields
     for (final field in fields) {
       buffer.writeln('  final ${field.type} ${field.name};');
     }
@@ -402,7 +395,7 @@ class JsonToDartGenerator {
     return buffer.toString();
   }
 
-  /// Generate CLEAN fromJson - all logic hidden in package
+  /// fromJson that reads every field with a safe reader
   String _generateFromJson(String className, List<FieldInfo> fields) {
     final buffer = StringBuffer();
 
@@ -462,12 +455,18 @@ class JsonToDartGenerator {
 
   String _getSafeMethod(String type) {
     switch (type) {
-      case 'int': return 'safeInt';
-      case 'double': return 'safeDouble';
-      case 'bool': return 'safeBool';
-      case 'String': return 'safeString';
-      case 'DateTime': return 'safeDateTime';
-      default: return 'safeString';
+      case 'int':
+        return 'safeInt';
+      case 'double':
+        return 'safeDouble';
+      case 'bool':
+        return 'safeBool';
+      case 'String':
+        return 'safeString';
+      case 'DateTime':
+        return 'safeDateTime';
+      default:
+        return 'safeString';
     }
   }
 
@@ -562,9 +561,7 @@ class JsonToDartGenerator {
     return buffer.toString();
   }
 
-  // ═══════════════════════════════════════════════════════════════════════
   // Singularization (list field name → item class name)
-  // ═══════════════════════════════════════════════════════════════════════
 
   static const _irregularPlurals = {
     'analyses': 'analysis', 'bonuses': 'bonus', 'buses': 'bus', //

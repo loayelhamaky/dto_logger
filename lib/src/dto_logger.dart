@@ -302,7 +302,8 @@ class DtoLogger {
 
     // Build entire output as one string for fewer I/O calls
     final buf = StringBuffer();
-    buf.writeln('$r$boxColor╔╣ $icon $bold$resolvedName$r$boxColor ║ $statusText$r');
+    buf.writeln(
+        '$r$boxColor╔╣ $icon $bold$resolvedName$r$boxColor ║ $statusText$r');
 
     if (json.isNotEmpty) {
       final maxKeyLen =
@@ -355,25 +356,22 @@ class DtoLogger {
     // warns  = typeCoerced, suspiciousType, missingField (worth knowing)
     // info   = nullValue (very common, just informational)
     // extras = extraField (backend sends unused data)
-    final errors = session.issues
-        .where((i) => i.type == IssueType.typeMismatch)
-        .toList();
+    final errors =
+        session.issues.where((i) => i.type == IssueType.typeMismatch).toList();
     final warns = session.issues
         .where((i) =>
             i.type == IssueType.typeCoerced ||
             i.type == IssueType.suspiciousType ||
             i.type == IssueType.missingField)
         .toList();
-    final infos = session.issues
-        .where((i) => i.type == IssueType.nullValue)
-        .toList();
+    final infos =
+        session.issues.where((i) => i.type == IssueType.nullValue).toList();
     final extras =
         session.issues.where((i) => i.type == IssueType.extraField).toList();
     final hasErrors = errors.isNotEmpty;
     final hasWarnings = warns.isNotEmpty;
     final hasExtras = extras.isNotEmpty;
 
-    // Filter by log level
     if (DtoLogConfig.level == DtoLogLevel.errors && !hasErrors) return;
     if (DtoLogConfig.level == DtoLogLevel.warnings &&
         !hasErrors &&
@@ -392,7 +390,8 @@ class DtoLogger {
         if (count == DtoLogConfig.maxReportsPerClass + 1) {
           final dim = DtoLogConfig.useColors ? AnsiColors.dim : '';
           final r = DtoLogConfig.useColors ? AnsiColors.reset : '';
-          _log('$dim╔╣ ... $key ║ further logs suppressed (repeated pattern)$r');
+          _log(
+              '$dim╔╣ ... $key ║ further logs suppressed (repeated pattern)$r');
         }
         return;
       }
@@ -436,9 +435,8 @@ class DtoLogger {
       boxColor = c ? AnsiColors.green : '';
       icon = '✓';
       final nullCount = infos.length;
-      statusText = nullCount > 0
-          ? 'parsed safely · $nullCount null'
-          : 'parsed safely';
+      statusText =
+          nullCount > 0 ? 'parsed safely · $nullCount null' : 'parsed safely';
     }
 
     final r = c ? AnsiColors.reset : '';
@@ -510,7 +508,6 @@ class DtoLogger {
       }
     }
 
-    // Bottom border
     buf.write('$boxColor╚${'═' * w}$r');
     _log(buf.toString());
   }
@@ -656,7 +653,8 @@ extension SafeJsonParsing on Map<String, dynamic> {
     for (var i = 0; i < value.length; i++) {
       final map = SafeParser.asMap(value[i]).value;
       if (map == null) {
-        DtoLogger.logIssue('$key[$i]',
+        DtoLogger.logIssue(
+            '$key[$i]',
             'got ${value[i].runtimeType}, expected Map (skipped)',
             IssueType.typeMismatch);
         continue;
@@ -694,11 +692,12 @@ extension SafeJsonParsing on Map<String, dynamic> {
       }
     }
     if (coerced > 0) {
-      DtoLogger.logIssue(key, '$coerced item(s) coerced to $T',
-          IssueType.typeCoerced);
+      DtoLogger.logIssue(
+          key, '$coerced item(s) coerced to $T', IssueType.typeCoerced);
     }
     if (skipped.isNotEmpty) {
-      DtoLogger.logIssue(key,
+      DtoLogger.logIssue(
+          key,
           '${skipped.length} item(s) are not $T, skipped at ${skipped.join(', ')}',
           IssueType.typeMismatch);
     }
@@ -734,8 +733,8 @@ extension SafeJsonParsing on Map<String, dynamic> {
       if (v.name.toLowerCase() == str) return v;
     }
     final allowed = values.map((v) => v.name).join(', ');
-    DtoLogger.logIssue(key, '"$raw" — expected: $allowed',
-        IssueType.typeMismatch);
+    DtoLogger.logIssue(
+        key, '"$raw" — expected: $allowed', IssueType.typeMismatch);
     return null;
   }
 
@@ -925,7 +924,6 @@ class LoggedMap extends MapBase<String, dynamic> {
       }
     }
 
-    // Reuse existing print infrastructure
     final session = _ParseSession(
       className: _className,
       json: _inner,

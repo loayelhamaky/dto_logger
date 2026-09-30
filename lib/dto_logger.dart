@@ -1,20 +1,17 @@
-/// DTO Logger - A powerful DTO generator and validator for Flutter/Dart
-/// 
-/// CLEAN generated classes with automatic validation logging.
-/// 
-/// Usage:
+/// Debug-only logging and safe type coercion for JSON DTOs.
+///
 /// ```dart
 /// class User {
 ///   final int? id;
 ///   final String? name;
-///   
+///
 ///   User({this.id, this.name});
-///   
+///
 ///   factory User.fromJson(Map<String, dynamic> json) {
-///     return DtoLogger.parse('User', json, () => User(
+///     return DtoLogger.parse(json, () => User(
 ///       id: json.safeInt('id'),
 ///       name: json.safeString('name'),
-///     ));
+///     ), 'User');
 ///   }
 /// }
 /// ```

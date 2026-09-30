@@ -2,9 +2,6 @@ import 'package:dto_logger/dto_logger.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // ==========================================================================
-  // Basic type generation
-  // ==========================================================================
   group('DtoMock.generate basic types', () {
     test('int field generates integer', () {
       final result = DtoMock.generate({'count': 'int'});
@@ -40,9 +37,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Smart field name heuristics - String
-  // ==========================================================================
   group('DtoMock smart String heuristics', () {
     test('email field generates email format', () {
       final result = DtoMock.generate({'email': 'String'});
@@ -153,9 +147,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Smart field name heuristics - int
-  // ==========================================================================
   group('DtoMock smart int heuristics', () {
     test('id field generates positive int', () {
       final result = DtoMock.generate({'id': 'int'});
@@ -186,9 +177,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Smart field name heuristics - double
-  // ==========================================================================
   group('DtoMock smart double heuristics', () {
     test('price field generates realistic price', () {
       final result = DtoMock.generate({'price': 'double'});
@@ -221,9 +209,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Smart field name heuristics - bool
-  // ==========================================================================
   group('DtoMock smart bool heuristics', () {
     test('is_active generates true', () {
       final result = DtoMock.generate({'is_active': 'bool'});
@@ -251,9 +236,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Smart DateTime heuristics
-  // ==========================================================================
   group('DtoMock smart DateTime heuristics', () {
     test('created_at generates past date', () {
       final result = DtoMock.generate({'created_at': 'DateTime'});
@@ -274,9 +256,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Nested objects
-  // ==========================================================================
   group('DtoMock nested objects', () {
     test('nested map schema generates nested map', () {
       final result = DtoMock.generate({
@@ -313,9 +292,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // List generation
-  // ==========================================================================
   group('DtoMock list generation', () {
     test('List<String> generates list of 3 strings', () {
       final result = DtoMock.generate({'tags': 'List<String>'});
@@ -346,9 +322,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Map type
-  // ==========================================================================
   group('DtoMock Map type', () {
     test('Map<String, dynamic> generates simple map', () {
       final result = DtoMock.generate({'metadata': 'Map<String, dynamic>'});
@@ -356,9 +329,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Seed determinism
-  // ==========================================================================
   group('DtoMock seed determinism', () {
     test('same seed produces same output', () {
       final a = DtoMock.generate({'id': 'int', 'name': 'String'}, seed: 42);
@@ -375,9 +345,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // generateList
-  // ==========================================================================
   group('DtoMock.generateList', () {
     test('generates correct count', () {
       final list = DtoMock.generateList({'id': 'int'}, count: 5);
@@ -393,7 +360,8 @@ void main() {
 
     test('startSeed offsets all seeds', () {
       final listA = DtoMock.generateList({'id': 'int'}, count: 2, startSeed: 0);
-      final listB = DtoMock.generateList({'id': 'int'}, count: 2, startSeed: 10);
+      final listB =
+          DtoMock.generateList({'id': 'int'}, count: 2, startSeed: 10);
       expect(listA[0]['id'] != listB[0]['id'], isTrue);
     });
 
@@ -408,9 +376,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // DtoMock.value standalone
-  // ==========================================================================
   group('DtoMock.value', () {
     test('generates int value', () {
       expect(DtoMock.value('id', 'int'), isA<int>());
@@ -435,9 +400,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // Edge cases
-  // ==========================================================================
   group('DtoMock edge cases', () {
     test('empty schema generates empty map', () {
       final result = DtoMock.generate({});

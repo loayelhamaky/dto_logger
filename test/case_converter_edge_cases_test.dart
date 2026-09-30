@@ -2,9 +2,6 @@ import 'package:dto_logger/dto_logger.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // ==========================================================================
-  // snakeToCamel - numbers in identifiers
-  // ==========================================================================
   group('snakeToCamel with numbers', () {
     test('user_2_name → user2Name', () {
       expect(CaseConverter.snakeToCamel('user_2_name'), 'user2Name');
@@ -27,9 +24,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // snakeToCamel - single and short identifiers
-  // ==========================================================================
   group('snakeToCamel single/short identifiers', () {
     test('single char "a" → "a"', () {
       expect(CaseConverter.snakeToCamel('a'), 'a');
@@ -52,9 +46,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // snakeToCamel - all uppercase
-  // ==========================================================================
   group('snakeToCamel all uppercase', () {
     test('HTTP_STATUS → httpStatus', () {
       expect(CaseConverter.snakeToCamel('HTTP_STATUS'), 'httpStatus');
@@ -73,9 +64,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // snakeToCamel - consecutive underscores
-  // ==========================================================================
   group('snakeToCamel consecutive underscores', () {
     test('my__field → myField (double underscore)', () {
       expect(CaseConverter.snakeToCamel('my__field'), 'myField');
@@ -90,9 +78,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // snakeToCamel - only underscores
-  // ==========================================================================
   group('snakeToCamel only underscores', () {
     test('"_" → "_" (single underscore)', () {
       expect(CaseConverter.snakeToCamel('_'), '_');
@@ -107,9 +92,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // snakeToCamel - very long identifiers
-  // ==========================================================================
   group('snakeToCamel very long identifiers', () {
     test('100+ char snake_case converts correctly', () {
       // Build: a_b_c_d_... (50+ segments)
@@ -124,9 +106,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // camelToSnake - numbers in identifiers
-  // ==========================================================================
   group('camelToSnake with numbers', () {
     test('user2Name → user2_name', () {
       // Numbers don't trigger uppercase split
@@ -142,9 +121,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // camelToSnake - acronyms and consecutive caps
-  // ==========================================================================
   group('camelToSnake acronyms', () {
     test('HTTPResponse → http_response', () {
       expect(CaseConverter.camelToSnake('HTTPResponse'), 'http_response');
@@ -171,9 +147,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // snakeToPascal edge cases
-  // ==========================================================================
   group('snakeToPascal edge cases', () {
     test('empty string → empty string', () {
       expect(CaseConverter.snakeToPascal(''), '');
@@ -202,9 +175,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // isValidIdentifier edge cases
-  // ==========================================================================
   group('isValidIdentifier edge cases', () {
     test('empty string is invalid', () {
       expect(CaseConverter.isValidIdentifier(''), isFalse);
@@ -239,9 +209,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // toValidIdentifier edge cases
-  // ==========================================================================
   group('toValidIdentifier edge cases', () {
     test('empty string → "field"', () {
       expect(CaseConverter.toValidIdentifier(''), 'field');

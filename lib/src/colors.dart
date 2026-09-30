@@ -86,15 +86,20 @@ class AnsiColors {
     final width = maxLen + 4;
 
     final buffer = StringBuffer();
-    buffer.writeln('$color$boxTopLeft${boxHorizontal * (width - 2)}$boxTopRight$reset');
-    buffer.writeln('$color$boxVertical $bold$title${' ' * (width - title.length - 3)}$reset$color$boxVertical$reset');
-    buffer.writeln('$color$boxTeeRight${boxHorizontal * (width - 2)}$boxTeeLeft$reset');
+    buffer.writeln(
+        '$color$boxTopLeft${boxHorizontal * (width - 2)}$boxTopRight$reset');
+    buffer.writeln(
+        '$color$boxVertical $bold$title${' ' * (width - title.length - 3)}$reset$color$boxVertical$reset');
+    buffer.writeln(
+        '$color$boxTeeRight${boxHorizontal * (width - 2)}$boxTeeLeft$reset');
 
     for (final line in lines) {
-      buffer.writeln('$color$boxVertical$reset $line${' ' * (width - line.length - 3)}$color$boxVertical$reset');
+      buffer.writeln(
+          '$color$boxVertical$reset $line${' ' * (width - line.length - 3)}$color$boxVertical$reset');
     }
 
-    buffer.writeln('$color$boxBottomLeft${boxHorizontal * (width - 2)}$boxBottomRight$reset');
+    buffer.writeln(
+        '$color$boxBottomLeft${boxHorizontal * (width - 2)}$boxBottomRight$reset');
     return buffer.toString();
   }
 }

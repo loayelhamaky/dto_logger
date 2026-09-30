@@ -1,19 +1,13 @@
 import 'package:test/test.dart';
-import '../lib/src/dto_logger.dart';
-import '../lib/src/safe_parser.dart';
+import 'package:dto_logger/src/dto_logger.dart';
+import 'package:dto_logger/src/safe_parser.dart';
 
-// ============================================================
-// Test enums for safeEnum tests
-// ============================================================
 enum TestStatus { active, inactive, pending, deleted }
 
 enum TestColor { red, green, blue }
 
 enum TestPriority { low, medium, high, critical }
 
-// ============================================================
-// Simple test model for safeObject / safeList tests
-// ============================================================
 class _TestModel {
   final int id;
   final String name;
@@ -30,9 +24,6 @@ class _TestModel {
 }
 
 void main() {
-  // ============================================================
-  // SETUP / TEARDOWN
-  // ============================================================
   setUp(() {
     DtoLogConfig.enabled = true;
     DtoLogConfig.level = DtoLogLevel.verbose;
@@ -45,9 +36,6 @@ void main() {
     DtoLogConfig.maxWidth = 80;
   });
 
-  // ============================================================
-  // DtoLogConfig (15+ tests)
-  // ============================================================
   group('DtoLogConfig', () {
     test('default enabled is true', () {
       // Reset to see default. The setUp already sets it, but we verify.
@@ -127,7 +115,8 @@ void main() {
       expect(DtoLogConfig.maxValueLength, 100);
     });
 
-    test('enabled=false disables parse output but still returns parsed value', () {
+    test('enabled=false disables parse output but still returns parsed value',
+        () {
       DtoLogConfig.enabled = false;
       final json = <String, dynamic>{'id': 1, 'name': 'Alice'};
       final result = DtoLogger.parse(json, () => 42);
@@ -147,9 +136,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // DtoLogLevel enum (5 tests)
-  // ============================================================
   group('DtoLogLevel', () {
     test('has exactly 4 values', () {
       expect(DtoLogLevel.values.length, 4);
@@ -172,9 +158,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // IssueType enum (5 tests)
-  // ============================================================
   group('IssueType', () {
     test('has exactly 6 values', () {
       expect(IssueType.values.length, 6);
@@ -201,9 +184,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // DtoIssue (5 tests)
-  // ============================================================
   group('DtoIssue', () {
     test('stores field correctly', () {
       const issue = DtoIssue(
@@ -253,9 +233,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // DtoLogger.parse (40+ tests)
-  // ============================================================
   group('DtoLogger.parse', () {
     test('returns the builder result correctly - int', () {
       final json = <String, dynamic>{'id': 1};
@@ -297,7 +274,9 @@ void main() {
     });
 
     test('returns the builder result correctly - List', () {
-      final json = <String, dynamic>{'items': [1, 2, 3]};
+      final json = <String, dynamic>{
+        'items': [1, 2, 3]
+      };
       final result = DtoLogger.parse(json, () {
         json.safeListOf<int>('items');
         return [1, 2, 3];
@@ -464,7 +443,8 @@ void main() {
       expect(result, '1-two-true');
     });
 
-    test('coercing string to int records typeCoerced issue but returns value', () {
+    test('coercing string to int records typeCoerced issue but returns value',
+        () {
       final json = <String, dynamic>{'id': '99'};
       late int? parsedId;
       DtoLogger.parse(json, () {
@@ -563,7 +543,9 @@ void main() {
     });
 
     test('unrecognized type for int returns null', () {
-      final json = <String, dynamic>{'id': [1, 2]};
+      final json = <String, dynamic>{
+        'id': [1, 2]
+      };
       final result = DtoLogger.parse(json, () {
         return json.safeInt('id');
       });
@@ -571,7 +553,9 @@ void main() {
     });
 
     test('unrecognized type for double returns null', () {
-      final json = <String, dynamic>{'price': [1.0]};
+      final json = <String, dynamic>{
+        'price': [1.0]
+      };
       final result = DtoLogger.parse(json, () {
         return json.safeDouble('price');
       });
@@ -579,7 +563,9 @@ void main() {
     });
 
     test('unrecognized type for bool returns null', () {
-      final json = <String, dynamic>{'flag': [true]};
+      final json = <String, dynamic>{
+        'flag': [true]
+      };
       final result = DtoLogger.parse(json, () {
         return json.safeBool('flag');
       });
@@ -628,12 +614,12 @@ void main() {
     });
   });
 
-  // ============================================================
-  // DtoLogger.parse - Nested objects / Session Stack (20+ tests)
-  // ============================================================
   group('DtoLogger.parse - Nested objects / Session Stack', () {
     test('parent session preserved after nested parse', () {
-      final parentJson = <String, dynamic>{'id': 1, 'child': {'name': 'Alice'}};
+      final parentJson = <String, dynamic>{
+        'id': 1,
+        'child': {'name': 'Alice'}
+      };
       final result = DtoLogger.parse(parentJson, () {
         final id = parentJson.safeInt('id');
         parentJson.safeObject<_TestModel>('child', (m) {
@@ -985,9 +971,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeInt (15+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeInt', () {
     test('int value returns int directly', () {
       final json = <String, dynamic>{'id': 42};
@@ -1032,7 +1015,9 @@ void main() {
     });
 
     test('List returns null', () {
-      final json = <String, dynamic>{'id': [1, 2, 3]};
+      final json = <String, dynamic>{
+        'id': [1, 2, 3]
+      };
       final result = DtoLogger.parse(json, () => json.safeInt('id'));
       expect(result, isNull);
     });
@@ -1086,15 +1071,14 @@ void main() {
     });
 
     test('Map returns null', () {
-      final json = <String, dynamic>{'id': {'nested': 1}};
+      final json = <String, dynamic>{
+        'id': {'nested': 1}
+      };
       final result = DtoLogger.parse(json, () => json.safeInt('id'));
       expect(result, isNull);
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeDouble (12+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeDouble', () {
     test('double value returns double directly', () {
       final json = <String, dynamic>{'price': 9.99};
@@ -1169,7 +1153,9 @@ void main() {
     });
 
     test('List returns null', () {
-      final json = <String, dynamic>{'price': [1.0, 2.0]};
+      final json = <String, dynamic>{
+        'price': [1.0, 2.0]
+      };
       final result = DtoLogger.parse(json, () => json.safeDouble('price'));
       expect(result, isNull);
     });
@@ -1181,9 +1167,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeString (12+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeString', () {
     test('String value returns String directly', () {
       final json = <String, dynamic>{'name': 'Alice'};
@@ -1222,13 +1205,17 @@ void main() {
     });
 
     test('List returns null', () {
-      final json = <String, dynamic>{'name': [1, 2]};
+      final json = <String, dynamic>{
+        'name': [1, 2]
+      };
       final result = DtoLogger.parse(json, () => json.safeString('name'));
       expect(result, isNull);
     });
 
     test('Map returns null', () {
-      final json = <String, dynamic>{'name': {'key': 'val'}};
+      final json = <String, dynamic>{
+        'name': {'key': 'val'}
+      };
       final result = DtoLogger.parse(json, () => json.safeString('name'));
       expect(result, isNull);
     });
@@ -1271,9 +1258,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeBool (15+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeBool', () {
     test('bool true returns true', () {
       final json = <String, dynamic>{'flag': true};
@@ -1360,13 +1344,17 @@ void main() {
     });
 
     test('List returns null', () {
-      final json = <String, dynamic>{'flag': [true]};
+      final json = <String, dynamic>{
+        'flag': [true]
+      };
       final result = DtoLogger.parse(json, () => json.safeBool('flag'));
       expect(result, isNull);
     });
 
     test('Map returns null', () {
-      final json = <String, dynamic>{'flag': {'val': true}};
+      final json = <String, dynamic>{
+        'flag': {'val': true}
+      };
       final result = DtoLogger.parse(json, () => json.safeBool('flag'));
       expect(result, isNull);
     });
@@ -1408,9 +1396,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeDateTime (10+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeDateTime', () {
     test('ISO 8601 string coerced to DateTime', () {
       final json = <String, dynamic>{'date': '2024-01-15T10:30:00.000Z'};
@@ -1472,7 +1457,9 @@ void main() {
     });
 
     test('List returns null', () {
-      final json = <String, dynamic>{'date': [2024, 1, 15]};
+      final json = <String, dynamic>{
+        'date': [2024, 1, 15]
+      };
       final result = DtoLogger.parse(json, () => json.safeDateTime('date'));
       expect(result, isNull);
     });
@@ -1509,16 +1496,14 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeObject (15+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeObject', () {
     test('valid Map returns parsed object', () {
       final json = <String, dynamic>{
         'user': {'id': 1, 'name': 'Alice'},
       };
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNotNull);
       expect(result!.id, 1);
@@ -1528,7 +1513,8 @@ void main() {
     test('null returns null with null issue', () {
       final json = <String, dynamic>{'user': null};
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1536,7 +1522,8 @@ void main() {
     test('String value returns null with mismatch issue', () {
       final json = <String, dynamic>{'user': 'not a map'};
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1544,15 +1531,19 @@ void main() {
     test('int value returns null with mismatch issue', () {
       final json = <String, dynamic>{'user': 42};
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
 
     test('List value returns null with mismatch issue', () {
-      final json = <String, dynamic>{'user': [1, 2, 3]};
+      final json = <String, dynamic>{
+        'user': [1, 2, 3]
+      };
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1560,7 +1551,8 @@ void main() {
     test('bool value returns null with mismatch issue', () {
       final json = <String, dynamic>{'user': true};
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1583,7 +1575,8 @@ void main() {
     test('key not in map returns null', () {
       final json = <String, dynamic>{};
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1593,7 +1586,8 @@ void main() {
         'wrapper': {'id': 5, 'name': 'Nested'},
       };
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('wrapper', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'wrapper', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNotNull);
       expect(result!.id, 5);
@@ -1605,7 +1599,8 @@ void main() {
         'user': <String, dynamic>{},
       };
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNotNull);
       expect(result!.id, 0); // defaults from _TestModel.fromJson
@@ -1631,7 +1626,8 @@ void main() {
         'data': {'id': 10, 'name': 'Custom'},
       };
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('data', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'data', (m) => _TestModel.fromJson(m));
       });
       expect(result, isA<_TestModel>());
     });
@@ -1667,15 +1663,13 @@ void main() {
     test('double value returns null with mismatch issue', () {
       final json = <String, dynamic>{'user': 3.14};
       final result = DtoLogger.parse(json, () {
-        return json.safeObject<_TestModel>('user', (m) => _TestModel.fromJson(m));
+        return json.safeObject<_TestModel>(
+            'user', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeList (12+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeList', () {
     test('valid List of Maps returns parsed list', () {
       final json = <String, dynamic>{
@@ -1685,7 +1679,8 @@ void main() {
         ],
       };
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNotNull);
       expect(result!.length, 2);
@@ -1696,7 +1691,8 @@ void main() {
     test('null returns null', () {
       final json = <String, dynamic>{'users': null};
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1704,7 +1700,8 @@ void main() {
     test('String returns null with mismatch', () {
       final json = <String, dynamic>{'users': 'not a list'};
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1712,7 +1709,8 @@ void main() {
     test('int returns null with mismatch', () {
       final json = <String, dynamic>{'users': 42};
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1720,7 +1718,8 @@ void main() {
     test('empty list returns empty list', () {
       final json = <String, dynamic>{'users': []};
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNotNull);
       expect(result!.isEmpty, isTrue);
@@ -1747,7 +1746,8 @@ void main() {
     test('key not in map returns null', () {
       final json = <String, dynamic>{};
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1773,7 +1773,8 @@ void main() {
         ],
       };
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNotNull);
       expect(result!.length, 1);
@@ -1784,7 +1785,8 @@ void main() {
       final items = List.generate(100, (i) => {'id': i, 'name': 'User$i'});
       final json = <String, dynamic>{'users': items};
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNotNull);
       expect(result!.length, 100);
@@ -1792,9 +1794,12 @@ void main() {
     });
 
     test('Map value returns null with mismatch', () {
-      final json = <String, dynamic>{'users': {'key': 'val'}};
+      final json = <String, dynamic>{
+        'users': {'key': 'val'}
+      };
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
@@ -1802,18 +1807,18 @@ void main() {
     test('bool value returns null with mismatch', () {
       final json = <String, dynamic>{'users': true};
       final result = DtoLogger.parse(json, () {
-        return json.safeList<_TestModel>('users', (m) => _TestModel.fromJson(m));
+        return json.safeList<_TestModel>(
+            'users', (m) => _TestModel.fromJson(m));
       });
       expect(result, isNull);
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeListOf (12+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeListOf', () {
     test('List<int> with all ints returns List<int>', () {
-      final json = <String, dynamic>{'ids': [1, 2, 3]};
+      final json = <String, dynamic>{
+        'ids': [1, 2, 3]
+      };
       final result = DtoLogger.parse(json, () {
         return json.safeListOf<int>('ids');
       });
@@ -1893,7 +1898,9 @@ void main() {
     });
 
     test('single element list', () {
-      final json = <String, dynamic>{'ids': [42]};
+      final json = <String, dynamic>{
+        'ids': [42]
+      };
       final result = DtoLogger.parse(json, () {
         return json.safeListOf<int>('ids');
       });
@@ -1913,7 +1920,9 @@ void main() {
     });
 
     test('Map value returns null', () {
-      final json = <String, dynamic>{'ids': {'a': 1}};
+      final json = <String, dynamic>{
+        'ids': {'a': 1}
+      };
       final result = DtoLogger.parse(json, () {
         return json.safeListOf<int>('ids');
       });
@@ -1933,9 +1942,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeEnum (15+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeEnum', () {
     test('valid enum value returns correct enum', () {
       final json = <String, dynamic>{'status': 'active'};
@@ -2078,7 +2084,9 @@ void main() {
       expect(result, TestPriority.critical);
     });
 
-    test('bool value returns null (toString is "true"/"false", not a valid enum)', () {
+    test(
+        'bool value returns null (toString is "true"/"false", not a valid enum)',
+        () {
       final json = <String, dynamic>{'status': true};
       final result = DtoLogger.parse(json, () {
         return json.safeEnum<TestStatus>('status', TestStatus.values);
@@ -2087,9 +2095,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeJsonParsing extension - safeMap (10+ tests)
-  // ============================================================
   group('SafeJsonParsing - safeMap', () {
     test('valid Map<String, dynamic> returns same map', () {
       final innerMap = <String, dynamic>{'key': 'value', 'num': 42};
@@ -2127,7 +2132,9 @@ void main() {
     });
 
     test('List returns null', () {
-      final json = <String, dynamic>{'data': [1, 2, 3]};
+      final json = <String, dynamic>{
+        'data': [1, 2, 3]
+      };
       final result = DtoLogger.parse(json, () {
         return json.safeMap('data');
       });
@@ -2207,9 +2214,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // safeIntOr / safeDoubleOr / safeStringOr / safeBoolOr (10+ tests)
-  // ============================================================
   group('safeIntOr', () {
     test('returns value when present', () {
       final json = <String, dynamic>{'id': 42};
@@ -2245,19 +2249,22 @@ void main() {
   group('safeDoubleOr', () {
     test('returns value when present', () {
       final json = <String, dynamic>{'price': 9.99};
-      final result = DtoLogger.parse(json, () => json.safeDoubleOr('price', 0.0));
+      final result =
+          DtoLogger.parse(json, () => json.safeDoubleOr('price', 0.0));
       expect(result, 9.99);
     });
 
     test('returns default when null', () {
       final json = <String, dynamic>{'price': null};
-      final result = DtoLogger.parse(json, () => json.safeDoubleOr('price', -1.0));
+      final result =
+          DtoLogger.parse(json, () => json.safeDoubleOr('price', -1.0));
       expect(result, -1.0);
     });
 
     test('returns default when key missing', () {
       final json = <String, dynamic>{};
-      final result = DtoLogger.parse(json, () => json.safeDoubleOr('price', 0.0));
+      final result =
+          DtoLogger.parse(json, () => json.safeDoubleOr('price', 0.0));
       expect(result, 0.0);
     });
   });
@@ -2265,25 +2272,29 @@ void main() {
   group('safeStringOr', () {
     test('returns value when present', () {
       final json = <String, dynamic>{'name': 'Alice'};
-      final result = DtoLogger.parse(json, () => json.safeStringOr('name', 'default'));
+      final result =
+          DtoLogger.parse(json, () => json.safeStringOr('name', 'default'));
       expect(result, 'Alice');
     });
 
     test('returns default when null', () {
       final json = <String, dynamic>{'name': null};
-      final result = DtoLogger.parse(json, () => json.safeStringOr('name', 'N/A'));
+      final result =
+          DtoLogger.parse(json, () => json.safeStringOr('name', 'N/A'));
       expect(result, 'N/A');
     });
 
     test('returns default when key missing', () {
       final json = <String, dynamic>{};
-      final result = DtoLogger.parse(json, () => json.safeStringOr('name', 'unknown'));
+      final result =
+          DtoLogger.parse(json, () => json.safeStringOr('name', 'unknown'));
       expect(result, 'unknown');
     });
 
     test('returns coerced value from int', () {
       final json = <String, dynamic>{'name': 42};
-      final result = DtoLogger.parse(json, () => json.safeStringOr('name', 'default'));
+      final result =
+          DtoLogger.parse(json, () => json.safeStringOr('name', 'default'));
       expect(result, '42');
     });
   });
@@ -2291,7 +2302,8 @@ void main() {
   group('safeBoolOr', () {
     test('returns value when present', () {
       final json = <String, dynamic>{'flag': true};
-      final result = DtoLogger.parse(json, () => json.safeBoolOr('flag', false));
+      final result =
+          DtoLogger.parse(json, () => json.safeBoolOr('flag', false));
       expect(result, true);
     });
 
@@ -2303,13 +2315,15 @@ void main() {
 
     test('returns default when key missing', () {
       final json = <String, dynamic>{};
-      final result = DtoLogger.parse(json, () => json.safeBoolOr('flag', false));
+      final result =
+          DtoLogger.parse(json, () => json.safeBoolOr('flag', false));
       expect(result, false);
     });
 
     test('returns coerced value from String "yes"', () {
       final json = <String, dynamic>{'flag': 'yes'};
-      final result = DtoLogger.parse(json, () => json.safeBoolOr('flag', false));
+      final result =
+          DtoLogger.parse(json, () => json.safeBoolOr('flag', false));
       expect(result, true);
     });
 
@@ -2320,9 +2334,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // Extra Field Detection (20+ tests)
-  // ============================================================
   group('Extra Field Detection', () {
     test('all fields accessed - no extras detected (no crash)', () {
       final json = <String, dynamic>{'a': 1, 'b': 2, 'c': 3};
@@ -2462,7 +2473,10 @@ void main() {
     });
 
     test('safeDateTime tracks access correctly', () {
-      final json = <String, dynamic>{'date': '2024-01-01', 'extra': '2024-02-02'};
+      final json = <String, dynamic>{
+        'date': '2024-01-01',
+        'extra': '2024-02-02'
+      };
       DtoLogger.parse(json, () {
         json.safeDateTime('date');
         return null;
@@ -2581,9 +2595,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // DtoLogger.logJson (additional coverage)
-  // ============================================================
   group('DtoLogger.logJson', () {
     test('does not crash with empty map', () {
       DtoLogger.logJson(<String, dynamic>{});
@@ -2626,9 +2637,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // Edge Cases and Integration Tests
-  // ============================================================
   group('Edge Cases', () {
     test('parse with showJsonData=true does not crash', () {
       DtoLogConfig.showJsonData = true;
@@ -2789,9 +2797,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // ParseResult tests (via SafeParser)
-  // ============================================================
   group('ParseResult via SafeParser', () {
     test('asInt ok result has success=true and no warning', () {
       final result = SafeParser.asInt(42);
@@ -2913,9 +2918,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeParser.inferType tests
-  // ============================================================
   group('SafeParser.inferType', () {
     test('null inferred as String?', () {
       expect(SafeParser.inferType(null), 'String?');
@@ -2958,9 +2960,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SafeParser.asList tests
-  // ============================================================
   group('SafeParser.asList', () {
     test('valid list parsed with itemParser', () {
       final result = SafeParser.asList([1, 2, 3], (e) => e as int);
@@ -2987,9 +2986,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // Comprehensive integration tests
-  // ============================================================
   group('Integration', () {
     test('full model parse with all field types', () {
       final json = <String, dynamic>{
@@ -3114,10 +3110,13 @@ void main() {
       final result = DtoLogger.parse(json, () {
         final id = json.safeInt('id');
         final name = json.safeString('name');
-        final owner = json.safeObject<_TestModel>('owner', (m) => _TestModel.fromJson(m));
-        final members = json.safeList<_TestModel>('members', (m) => _TestModel.fromJson(m));
+        final owner =
+            json.safeObject<_TestModel>('owner', (m) => _TestModel.fromJson(m));
+        final members =
+            json.safeList<_TestModel>('members', (m) => _TestModel.fromJson(m));
         final status = json.safeEnum<TestStatus>('status', TestStatus.values);
-        final priority = json.safeEnum<TestPriority>('priority', TestPriority.values);
+        final priority =
+            json.safeEnum<TestPriority>('priority', TestPriority.values);
         final tags = json.safeListOf<String>('tags');
         final metadata = json.safeMap('metadata');
         return {

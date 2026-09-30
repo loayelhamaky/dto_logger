@@ -1,14 +1,11 @@
 import 'package:test/test.dart';
-import '../lib/src/dto_logger.dart';
-import '../lib/src/safe_parser.dart';
-import '../lib/src/json_to_dart.dart';
+import 'package:dto_logger/src/dto_logger.dart';
+import 'package:dto_logger/src/safe_parser.dart';
+import 'package:dto_logger/src/json_to_dart.dart';
 
 /// Edge cases and stress tests for dto_logger
 /// Covers scenarios not handled in main test file
 
-// ============================================================
-// Test helpers
-// ============================================================
 enum TestEnum { alpha, beta, gamma }
 
 class SimpleModel {
@@ -18,10 +15,12 @@ class SimpleModel {
   SimpleModel({this.id, this.name});
 
   factory SimpleModel.fromJson(Map<String, dynamic> json) {
-    return DtoLogger.parse(json, () => SimpleModel(
-      id: json.safeInt('id'),
-      name: json.safeString('name'),
-    ));
+    return DtoLogger.parse(
+        json,
+        () => SimpleModel(
+              id: json.safeInt('id'),
+              name: json.safeString('name'),
+            ));
   }
 }
 
@@ -37,9 +36,11 @@ class Level5 {
   final String value;
   Level5({required this.value});
   factory Level5.fromJson(Map<String, dynamic> json) {
-    return DtoLogger.parse(json, () => Level5(
-      value: json.safeString('value') ?? '',
-    ));
+    return DtoLogger.parse(
+        json,
+        () => Level5(
+              value: json.safeString('value') ?? '',
+            ));
   }
 }
 
@@ -47,9 +48,11 @@ class Level4 {
   final Level5? level5;
   Level4({this.level5});
   factory Level4.fromJson(Map<String, dynamic> json) {
-    return DtoLogger.parse(json, () => Level4(
-      level5: json.safeObject('level5', Level5.fromJson),
-    ));
+    return DtoLogger.parse(
+        json,
+        () => Level4(
+              level5: json.safeObject('level5', Level5.fromJson),
+            ));
   }
 }
 
@@ -57,9 +60,11 @@ class Level3 {
   final Level4? level4;
   Level3({this.level4});
   factory Level3.fromJson(Map<String, dynamic> json) {
-    return DtoLogger.parse(json, () => Level3(
-      level4: json.safeObject('level4', Level4.fromJson),
-    ));
+    return DtoLogger.parse(
+        json,
+        () => Level3(
+              level4: json.safeObject('level4', Level4.fromJson),
+            ));
   }
 }
 
@@ -67,9 +72,11 @@ class Level2 {
   final Level3? level3;
   Level2({this.level3});
   factory Level2.fromJson(Map<String, dynamic> json) {
-    return DtoLogger.parse(json, () => Level2(
-      level3: json.safeObject('level3', Level3.fromJson),
-    ));
+    return DtoLogger.parse(
+        json,
+        () => Level2(
+              level3: json.safeObject('level3', Level3.fromJson),
+            ));
   }
 }
 
@@ -77,9 +84,11 @@ class Level1 {
   final Level2? level2;
   Level1({this.level2});
   factory Level1.fromJson(Map<String, dynamic> json) {
-    return DtoLogger.parse(json, () => Level1(
-      level2: json.safeObject('level2', Level2.fromJson),
-    ));
+    return DtoLogger.parse(
+        json,
+        () => Level1(
+              level2: json.safeObject('level2', Level2.fromJson),
+            ));
   }
 }
 
@@ -95,9 +104,6 @@ class ThrowingModel {
 }
 
 void main() {
-  // ============================================================
-  // SETUP
-  // ============================================================
   setUp(() {
     DtoLogConfig.enabled = true;
     DtoLogConfig.level = DtoLogLevel.verbose;
@@ -108,17 +114,17 @@ void main() {
     DtoLogConfig.showJsonData = false;
     DtoLogConfig.maxValueLength = 50;
     DtoLogConfig.maxWidth = 80;
-    DtoLogConfig.compressLogs = false; // Disable compression by default in tests
+    DtoLogConfig.compressLogs =
+        false; // Disable compression by default in tests
     DtoLogConfig.maxReportsPerClass = 10;
   });
 
-  // ============================================================
-  // 1. Singularize tests
-  // ============================================================
   group('JsonToDartGenerator - _singularize', () {
     test('entries → Entry (ies → y)', () {
       final json = {
-        'entries': [{'id': 1}]
+        'entries': [
+          {'id': 1}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -130,7 +136,9 @@ void main() {
 
     test('addresses → Address (sses → ss)', () {
       final json = {
-        'addresses': [{'street': '123 Main'}]
+        'addresses': [
+          {'street': '123 Main'}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -141,7 +149,9 @@ void main() {
 
     test('boxes → Box (xes → x)', () {
       final json = {
-        'boxes': [{'size': 'large'}]
+        'boxes': [
+          {'size': 'large'}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -152,7 +162,9 @@ void main() {
 
     test('classes → Class (sses → ss)', () {
       final json = {
-        'classes': [{'name': 'Math'}]
+        'classes': [
+          {'name': 'Math'}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -163,7 +175,9 @@ void main() {
 
     test('dishes → Dish (shes → sh)', () {
       final json = {
-        'dishes': [{'type': 'plate'}]
+        'dishes': [
+          {'type': 'plate'}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -174,7 +188,9 @@ void main() {
 
     test('buses → Bus (ses → s)', () {
       final json = {
-        'buses': [{'number': '42'}]
+        'buses': [
+          {'number': '42'}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -185,7 +201,9 @@ void main() {
 
     test('quizzes → Quiz (irregular plural)', () {
       final json = {
-        'quizzes': [{'score': 100}]
+        'quizzes': [
+          {'score': 100}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -196,7 +214,9 @@ void main() {
 
     test('items → Item (generic s)', () {
       final json = {
-        'items': [{'id': 1}]
+        'items': [
+          {'id': 1}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -207,7 +227,9 @@ void main() {
 
     test('data → Data (no s, unchanged)', () {
       final json = {
-        'data': [{'value': 'test'}]
+        'data': [
+          {'value': 'test'}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -219,7 +241,9 @@ void main() {
 
     test('status → Status (ends in s but not plural)', () {
       final json = {
-        'status': [{'code': 200}]
+        'status': [
+          {'code': 200}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -231,7 +255,9 @@ void main() {
 
     test('watches → Watch (ches → ch)', () {
       final json = {
-        'watches': [{'brand': 'Rolex'}]
+        'watches': [
+          {'brand': 'Rolex'}
+        ]
       };
       final generator = JsonToDartGenerator();
       final result = generator.generate(json, 'Root');
@@ -241,9 +267,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // 2. Stress / Performance tests
-  // ============================================================
   group('Stress and Performance', () {
     test('large list compression - 100 items', () async {
       DtoLogConfig.compressLogs = true;
@@ -303,9 +326,7 @@ void main() {
           'level2': {
             'level3': {
               'level4': {
-                'level5': {
-                  'value': 'deep'
-                }
+                'level5': {'value': 'deep'}
               }
             }
           }
@@ -318,9 +339,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // 3. LoggedMap edge cases
-  // ============================================================
   group('LoggedMap edge cases', () {
     test('empty map .logged() does not crash', () {
       final json = <String, dynamic>{};
@@ -379,7 +397,7 @@ void main() {
     });
 
     test('map with very long field names (200+ chars)', () {
-      final longName = 'field_' + 'x' * 200;
+      final longName = 'field_${'x' * 200}';
       final json = {longName: 'value'};
 
       final logged = json.logged('LongNameModel');
@@ -397,9 +415,7 @@ void main() {
     test('nested .logged() - logged map inside logged map', () {
       final json = {
         'outer': 'value',
-        'inner': {
-          'nested': 'data'
-        }
+        'inner': {'nested': 'data'}
       };
 
       final logged = json.logged('OuterModel');
@@ -429,13 +445,11 @@ void main() {
       final json = {'field': 'value'};
       final logged = json.logged('NullKeyModel');
 
+      // ignore: collection_methods_unrelated_type
       expect(logged[null], isNull);
     });
   });
 
-  // ============================================================
-  // 4. DtoLogger.parse edge cases
-  // ============================================================
   group('DtoLogger.parse edge cases', () {
     test('empty JSON with builder that reads no fields', () {
       final result = EmptyModel.fromJson({});
@@ -456,9 +470,7 @@ void main() {
         'level2': {
           'level3': {
             'level4': {
-              'level5': {
-                'value': 'deep'
-              }
+              'level5': {'value': 'deep'}
             }
           }
         }
@@ -487,7 +499,8 @@ void main() {
       expect(result.name, 'Test');
     });
 
-    test('DtoLogConfig.level = DtoLogLevel.errors - only typeMismatch shown', () {
+    test('DtoLogConfig.level = DtoLogLevel.errors - only typeMismatch shown',
+        () {
       DtoLogConfig.level = DtoLogLevel.errors;
 
       final json = {'id': 'invalid', 'name': 'Test', 'extra': 'field'};
@@ -497,19 +510,20 @@ void main() {
     });
   });
 
-  // ============================================================
-  // 5. SafeJsonParsing extension edge cases
-  // ============================================================
   group('SafeJsonParsing extension edge cases', () {
     test('safeInt on a Map value - fails gracefully', () {
-      final json = {'field': {'nested': 'value'}};
+      final json = {
+        'field': {'nested': 'value'}
+      };
       final result = json.safeInt('field');
 
       expect(result, isNull);
     });
 
     test('safeString on a List value - fails gracefully', () {
-      final json = {'field': [1, 2, 3]};
+      final json = {
+        'field': [1, 2, 3]
+      };
       final result = json.safeString('field');
 
       expect(result, isNull);
@@ -540,9 +554,7 @@ void main() {
 
     test('safeObject with nested map that has wrong structure', () {
       final json = {
-        'nested': {
-          'invalid': 'structure'
-        }
+        'nested': {'invalid': 'structure'}
       };
 
       // SimpleModel expects 'id' and 'name'
@@ -612,9 +624,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // 6. Color output tests
-  // ============================================================
   group('Color output', () {
     test('useColors = false produces no ANSI codes', () {
       DtoLogConfig.useColors = false;
@@ -665,9 +674,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // 7. Message truncation tests
-  // ============================================================
   group('Message truncation', () {
     test('field name 40 chars + message gets truncated', () {
       final longFieldName = 'x' * 40;
@@ -682,9 +688,7 @@ void main() {
     test('maxWidth = 40 with long field names - truncation works', () {
       DtoLogConfig.maxWidth = 40;
 
-      final json = {
-        'very_long_field_name_that_exceeds_limit': 'invalid'
-      };
+      final json = {'very_long_field_name_that_exceeds_limit': 'invalid'};
 
       final logged = json.logged('ShortWidthModel');
       expect(logged['very_long_field_name_that_exceeds_limit'], 'invalid');
@@ -693,9 +697,7 @@ void main() {
     test('maxWidth = 200 with long messages - no truncation', () {
       DtoLogConfig.maxWidth = 200;
 
-      final json = {
-        'field_with_very_long_error_message': 'x' * 100
-      };
+      final json = {'field_with_very_long_error_message': 'x' * 100};
 
       final logged = json.logged('LongWidthModel');
       expect(logged['field_with_very_long_error_message'], 'x' * 100);
@@ -712,9 +714,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // 8. SafeParser edge cases
-  // ============================================================
   group('SafeParser edge cases', () {
     test('asInt with very large double', () {
       final result = SafeParser.asInt(9999999999999.99);
@@ -778,14 +777,14 @@ void main() {
     });
 
     test('asDateTime with millisecond timestamp', () {
-      final timestamp = 1704067200000; // Jan 1, 2024 in milliseconds
+      const timestamp = 1704067200000; // Jan 1, 2024 in milliseconds
       final result = SafeParser.asDateTime(timestamp);
       expect(result.value, isNotNull);
       expect(result.value?.year, 2024);
     });
 
     test('asDateTime with second timestamp', () {
-      final timestamp = 1704067200; // Jan 1, 2024 in seconds
+      const timestamp = 1704067200; // Jan 1, 2024 in seconds
       final result = SafeParser.asDateTime(timestamp);
       expect(result.value, isNotNull);
       expect(result.value?.year, 2024);
@@ -814,9 +813,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // 9. Additional edge cases
-  // ============================================================
   group('Additional edge cases', () {
     test('safeListOf with empty list', () {
       final json = {'items': <dynamic>[]};

@@ -1,10 +1,6 @@
 import 'package:test/test.dart';
 import 'package:dto_logger/dto_logger.dart';
 
-// ============================================================
-// REALISTIC MESSY DTOs
-// ============================================================
-
 // Enum for user status
 enum UserStatus { active, inactive, suspended, pending }
 
@@ -149,9 +145,6 @@ class ItemDto {
 }
 
 void main() {
-  // ============================================================
-  // SETUP / TEARDOWN
-  // ============================================================
   setUp(() {
     DtoLogConfig.enabled = true;
     DtoLogConfig.level = DtoLogLevel.verbose;
@@ -166,9 +159,6 @@ void main() {
     DtoLogConfig.maxReportsPerClass = 10;
   });
 
-  // ============================================================
-  // TEST DATA
-  // ============================================================
   final perfectJson = {
     'id': 123,
     'name': 'John Doe',
@@ -255,9 +245,6 @@ void main() {
     }, // Completely wrong
   ];
 
-  // ============================================================
-  // GROUP 1: PERFECT JSON TESTS
-  // ============================================================
   group('Perfect JSON - Safe Parser Approach', () {
     test('parses perfectly with no issues', () {
       final user = UserProfileDto.fromJson(perfectJson);
@@ -310,9 +297,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 2: MESSY JSON TESTS
-  // ============================================================
   group('Messy JSON - Safe Parser Approach', () {
     test('handles type coercion gracefully', () {
       final user = UserProfileDto.fromJson(messyJson);
@@ -378,9 +362,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 3: NIGHTMARE JSON TESTS
-  // ============================================================
   group('Nightmare JSON - Safe Parser Approach', () {
     test('survives completely wrong data without crashing', () {
       expect(() => UserProfileDto.fromJson(nightmareJson), returnsNormally);
@@ -418,9 +399,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 4: EMPTY JSON TESTS
-  // ============================================================
   group('Empty JSON Tests', () {
     test('handles empty JSON without crashing - safe parser', () {
       expect(() => UserProfileDto.fromJson(emptyJson), returnsNormally);
@@ -443,9 +421,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 5: LIST PARSING TESTS
-  // ============================================================
   group('List of Messy Items', () {
     test('parses all items without crashing', () {
       expect(() {
@@ -521,9 +496,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 6: EDGE CASES
-  // ============================================================
   group('Edge Cases', () {
     test('handles negative numbers correctly', () {
       final json = {
@@ -591,9 +563,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 7: ENUM PARSING TESTS
-  // ============================================================
   group('Enum Parsing', () {
     test('parses valid enum values', () {
       final json = {'id': 1, 'status': 'active'};
@@ -620,9 +589,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 8: DATETIME PARSING TESTS
-  // ============================================================
   group('DateTime Parsing', () {
     test('parses ISO8601 datetime strings', () {
       final json = {
@@ -675,9 +641,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // GROUP 9: LOGGING BEHAVIOR TESTS
-  // ============================================================
   group('Logging Behavior', () {
     test('disabled config prevents logging', () {
       DtoLogConfig.enabled = false;

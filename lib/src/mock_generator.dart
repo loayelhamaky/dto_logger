@@ -119,11 +119,9 @@ class DtoMock {
       case 'DateTime':
         return _smartDateTime(words, seed);
       default:
-        // Handle List<X> types
         if (type.startsWith('List<')) {
           return _smartList(key, type, seed);
         }
-        // Handle Map<String, dynamic>
         if (type.startsWith('Map<')) {
           return <String, dynamic>{'key_$seed': 'value_$seed'};
         }
@@ -131,11 +129,9 @@ class DtoMock {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Smart value generators - match whole words of the field name, so
   // "width" is not an "id", "video" is not an "id", and
   // "shipping_address" is not an IP address.
-  // ═══════════════════════════════════════════════════════════════════════════
 
   static int _smartInt(_FieldWords f, int seed) {
     if (f.has('id')) return seed + 1;
@@ -291,7 +287,9 @@ class DtoMock {
     if (f.has('hash')) return _hex(seed) * 4;
 
     // Technical
-    if (f.has('color') || f.has('colour')) return '#${_hex(seed).substring(0, 2)}${_hex(seed + 1).substring(0, 2)}${_hex(seed + 2).substring(0, 2)}';
+    if (f.has('color') || f.has('colour')) {
+      return '#${_hex(seed).substring(0, 2)}${_hex(seed + 1).substring(0, 2)}${_hex(seed + 2).substring(0, 2)}';
+    }
     if (f.has('currency')) return _currencies[seed % _currencies.length];
     if (f.has('locale') || f.has('language') || f.has('lang')) {
       return _locales[seed % _locales.length];
@@ -307,7 +305,6 @@ class DtoMock {
     if (f.has('role')) return 'user';
     if (f.has('gender')) return seed % 2 == 0 ? 'male' : 'female';
 
-    // Default: use field name + seed
     return '${lower}_$seed';
   }
 
@@ -337,10 +334,7 @@ class DtoMock {
     if (f.has('start') || f.has('begin') || f.has('starts')) {
       return base.add(Duration(days: seed)).toIso8601String();
     }
-    if (f.has('end') ||
-        f.has('ends') ||
-        f.has('finish') ||
-        f.has('deadline')) {
+    if (f.has('end') || f.has('ends') || f.has('finish') || f.has('deadline')) {
       return base.add(Duration(days: seed + 30)).toIso8601String();
     }
 
@@ -353,51 +347,111 @@ class DtoMock {
     final innerType = innerMatch?.group(1) ?? 'String';
     const count = 3; // Default list size
 
-    return List.generate(count, (i) => _generateValue(field, innerType, seed + i));
+    return List.generate(
+        count, (i) => _generateValue(field, innerType, seed + i));
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
   // Data pools
-  // ═══════════════════════════════════════════════════════════════════════════
 
   static String _hex(int seed) {
-    return ((seed.abs() * 2654435761) & 0xFFFFFFFF).toRadixString(16).padLeft(4, '0').substring(0, 4);
+    return ((seed.abs() * 2654435761) & 0xFFFFFFFF)
+        .toRadixString(16)
+        .padLeft(4, '0')
+        .substring(0, 4);
   }
 
   static const _firstNames = [
-    'Alice', 'Bob', 'Charlie', 'Diana', 'Eve',
-    'Frank', 'Grace', 'Henry', 'Ivy', 'Jack',
+    'Alice',
+    'Bob',
+    'Charlie',
+    'Diana',
+    'Eve',
+    'Frank',
+    'Grace',
+    'Henry',
+    'Ivy',
+    'Jack',
   ];
 
   static const _lastNames = [
-    'Smith', 'Johnson', 'Williams', 'Brown', 'Jones',
-    'Garcia', 'Miller', 'Davis', 'Wilson', 'Taylor',
+    'Smith',
+    'Johnson',
+    'Williams',
+    'Brown',
+    'Jones',
+    'Garcia',
+    'Miller',
+    'Davis',
+    'Wilson',
+    'Taylor',
   ];
 
   static const _names = [
-    'Alice Smith', 'Bob Johnson', 'Charlie Williams', 'Diana Brown',
-    'Eve Jones', 'Frank Garcia', 'Grace Miller', 'Henry Davis',
-    'Ivy Wilson', 'Jack Taylor',
+    'Alice Smith',
+    'Bob Johnson',
+    'Charlie Williams',
+    'Diana Brown',
+    'Eve Jones',
+    'Frank Garcia',
+    'Grace Miller',
+    'Henry Davis',
+    'Ivy Wilson',
+    'Jack Taylor',
   ];
 
   static const _cities = [
-    'New York', 'London', 'Tokyo', 'Paris', 'Berlin',
-    'Sydney', 'Toronto', 'Dubai', 'Singapore', 'Amsterdam',
+    'New York',
+    'London',
+    'Tokyo',
+    'Paris',
+    'Berlin',
+    'Sydney',
+    'Toronto',
+    'Dubai',
+    'Singapore',
+    'Amsterdam',
   ];
 
   static const _states = [
-    'California', 'Texas', 'New York', 'Florida', 'Illinois',
-    'Pennsylvania', 'Ohio', 'Georgia', 'Michigan', 'Virginia',
+    'California',
+    'Texas',
+    'New York',
+    'Florida',
+    'Illinois',
+    'Pennsylvania',
+    'Ohio',
+    'Georgia',
+    'Michigan',
+    'Virginia',
   ];
 
   static const _countries = [
-    'United States', 'United Kingdom', 'Japan', 'France', 'Germany',
-    'Australia', 'Canada', 'UAE', 'Singapore', 'Netherlands',
+    'United States',
+    'United Kingdom',
+    'Japan',
+    'France',
+    'Germany',
+    'Australia',
+    'Canada',
+    'UAE',
+    'Singapore',
+    'Netherlands',
   ];
 
   static const _currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
 
-  static const _locales = ['en', 'fr', 'de', 'ja', 'es', 'ar', 'zh', 'ko', 'pt', 'it'];
+  static const _locales = [
+    'en',
+    'fr',
+    'de',
+    'ja',
+    'es',
+    'ar',
+    'zh',
+    'ko',
+    'pt',
+    'it'
+  ];
 }
 
 /// The words of a field name: "userEmail", "user_email" and "User-Email"
@@ -409,8 +463,10 @@ class _FieldWords {
 
   factory _FieldWords(String key) {
     final spaced = key
-        .replaceAllMapped(RegExp(r'([a-z0-9])([A-Z])'), (m) => '${m[1]}_${m[2]}')
-        .replaceAllMapped(RegExp(r'([A-Z]+)([A-Z][a-z])'), (m) => '${m[1]}_${m[2]}');
+        .replaceAllMapped(
+            RegExp(r'([a-z0-9])([A-Z])'), (m) => '${m[1]}_${m[2]}')
+        .replaceAllMapped(
+            RegExp(r'([A-Z]+)([A-Z][a-z])'), (m) => '${m[1]}_${m[2]}');
     final words = spaced
         .toLowerCase()
         .split(RegExp(r'[^a-z0-9]+'))

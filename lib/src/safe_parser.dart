@@ -150,7 +150,6 @@ class SafeParser {
       return ParseResult.ok(value);
     }
 
-    // Convert primitives to string
     if (value is num || value is bool) {
       return ParseResult.coerced(
           value.toString(), value.runtimeType.toString(), value);
@@ -225,7 +224,6 @@ class SafeParser {
           return ParseResult.coerced(parsed, 'String (ISO8601)', value);
         }
       }
-      // Try parsing as number string
       final timestamp = int.tryParse(text);
       if (timestamp != null) {
         return _parseTimestamp(timestamp, value);
@@ -248,8 +246,7 @@ class SafeParser {
 
   static ParseResult<DateTime> _parseTimestamp(
       int timestamp, dynamic original) {
-    // Determine if seconds or milliseconds
-    // If > 10000000000 (year ~2286 in seconds), assume milliseconds
+    // Above 10000000000 (year ~2286 in seconds) it must be milliseconds
     final isMillis = timestamp > 10000000000;
     try {
       return ParseResult.coerced(
@@ -268,7 +265,7 @@ class SafeParser {
   /// Parse as List with coercion
   ///
   /// Handles:
-  /// - List → List<T>
+  /// - List → `List<T>`
   /// - null → null
   static ParseResult<List<T>> asList<T>(
     dynamic value,
@@ -352,6 +349,3 @@ class SafeParser {
     return 'dynamic$suffix';
   }
 }
-
-// Note: Use SafeJsonParsing extension from dto_logger.dart for Map extension methods
-// The extension was removed to avoid conflicts with the logging version

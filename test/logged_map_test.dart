@@ -3,9 +3,6 @@ import 'package:test/test.dart';
 import 'package:dto_logger/dto_logger.dart';
 
 void main() {
-  // ============================================================
-  // SETUP / TEARDOWN
-  // ============================================================
   setUp(() {
     DtoLogConfig.enabled = true;
     DtoLogConfig.level = DtoLogLevel.verbose;
@@ -18,9 +15,6 @@ void main() {
     DtoLogConfig.maxWidth = 80;
   });
 
-  // ============================================================
-  // BASIC TRACKING: .logged() returns a LoggedMap
-  // ============================================================
   group('LoggedMap - Basic tracking', () {
     test('logged() returns a LoggedMap (Map<String, dynamic>)', () {
       final json = {'id': 1, 'name': 'Alice'};
@@ -79,9 +73,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // NULL VALUE DETECTION
-  // ============================================================
   group('LoggedMap - Null value detection', () {
     test('accessed null value is detected', () async {
       final json = {'name': null};
@@ -129,9 +120,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // MISSING FIELD DETECTION
-  // ============================================================
   group('LoggedMap - Missing field detection', () {
     test('accessing a non-existent field records it as missing', () async {
       final json = {'id': 1};
@@ -165,9 +153,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SUSPICIOUS TYPE DETECTION
-  // ============================================================
   group('LoggedMap - Suspicious type detection', () {
     test('string "123" looks like int', () async {
       final json = {'id': '123'};
@@ -253,7 +238,8 @@ void main() {
       expect(logged['doubleValue'], equals(1.5));
     });
 
-    test('string that doesn\'t look like anything suspicious is not flagged', () async {
+    test('string that doesn\'t look like anything suspicious is not flagged',
+        () async {
       final json = {'name': 'Alice'};
       final logged = json.logged('TestClass');
 
@@ -265,9 +251,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // EXTRA FIELD DETECTION
-  // ============================================================
   group('LoggedMap - Extra field detection', () {
     test('unaccessed fields are detected as extra', () async {
       final json = {
@@ -304,7 +287,8 @@ void main() {
       expect(logged['extra2'], equals('unused2'));
     });
 
-    test('unaccessed null fields are NOT reported as extra (only null warning)', () async {
+    test('unaccessed null fields are NOT reported as extra (only null warning)',
+        () async {
       final json = {
         'accessed': 'value',
         'unaccessed_null': null,
@@ -320,9 +304,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // DISABLED CONFIG
-  // ============================================================
   group('LoggedMap - Disabled config', () {
     test('when enabled=false, logged() returns plain map', () {
       DtoLogConfig.enabled = false;
@@ -366,9 +347,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // SCHEDULED MICROTASK REPORTING
-  // ============================================================
   group('LoggedMap - Microtask scheduling', () {
     test('report() is scheduled via scheduleMicrotask', () async {
       final json = {'id': 1};
@@ -403,7 +381,8 @@ void main() {
       expect(logged['id'], equals(1));
     });
 
-    test('calling logged() multiple times creates separate LoggedMaps', () async {
+    test('calling logged() multiple times creates separate LoggedMaps',
+        () async {
       final json = {'id': 1};
       final logged1 = json.logged('Class1');
       final logged2 = json.logged('Class2');
@@ -423,9 +402,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // CLASS NAME PARAMETER
-  // ============================================================
   group('LoggedMap - Class name parameter', () {
     test('logged(className) uses provided class name', () async {
       final json = {'id': 1};
@@ -465,9 +441,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // EDGE CASES
-  // ============================================================
   group('LoggedMap - Edge cases', () {
     test('empty map', () async {
       final json = <String, dynamic>{};
@@ -598,9 +571,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // MAP INTERFACE COMPLIANCE
-  // ============================================================
   group('LoggedMap - Map interface compliance', () {
     test('operator[]= sets values', () {
       final logged = <String, dynamic>{'id': 1}.logged('Test');
@@ -656,9 +626,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // COMBINATION SCENARIOS
-  // ============================================================
   group('LoggedMap - Combination scenarios', () {
     test('accessed null + extra fields', () async {
       final json = {
@@ -725,9 +692,6 @@ void main() {
     });
   });
 
-  // ============================================================
-  // INTEGRATION WITH ACTUAL MAP OPERATIONS
-  // ============================================================
   group('LoggedMap - Integration with map operations', () {
     test('putIfAbsent works', () {
       final logged = <String, dynamic>{'id': 1}.logged('Test');

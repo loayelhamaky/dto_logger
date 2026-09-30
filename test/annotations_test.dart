@@ -1,12 +1,9 @@
 import 'package:test/test.dart';
-import '../lib/src/annotations.dart';
+import 'package:dto_logger/src/annotations.dart';
 
 // A dummy class used for NestedDto type tests
 
 void main() {
-  // =========================================================================
-  // DtoLog
-  // =========================================================================
   group('DtoLog', () {
     test('default constructor sets generateFromJson to true', () {
       const annotation = DtoLog();
@@ -71,9 +68,6 @@ void main() {
     });
   });
 
-  // =========================================================================
-  // DtoKey
-  // =========================================================================
   group('DtoKey', () {
     group('main constructor', () {
       test('sets name from positional argument', () {
@@ -205,9 +199,6 @@ void main() {
     });
   });
 
-  // =========================================================================
-  // DtoDefault
-  // =========================================================================
   group('DtoDefault', () {
     test('stores a String value', () {
       const nd = DtoDefault('hello');
@@ -271,9 +262,6 @@ void main() {
     });
   });
 
-  // =========================================================================
-  // DtoIgnore
-  // =========================================================================
   group('DtoIgnore', () {
     group('default constructor', () {
       test('sets fromJson to true by default', () {
@@ -291,7 +279,6 @@ void main() {
         const b = DtoIgnore();
         expect(identical(a, b), isTrue);
       });
-
     });
 
     group('fromJson named constructor', () {
@@ -331,9 +318,6 @@ void main() {
     });
   });
 
-  // =========================================================================
-  // DtoRequired
-  // =========================================================================
   group('DtoRequired', () {
     test('message is null by default', () {
       const req = DtoRequired();
@@ -392,9 +376,6 @@ void main() {
     });
   });
 
-  // =========================================================================
-  // Cross-annotation interaction sanity checks
-  // =========================================================================
   group('Cross-annotation sanity checks', () {
     test('DtoKey and DtoDefault can both reference default values', () {
       const jk = DtoKey('field', defaultValue: 0);
@@ -420,6 +401,5 @@ void main() {
       expect(ignore.fromJson, isFalse);
       expect(ignore.toJson, isTrue);
     });
-
   });
 }

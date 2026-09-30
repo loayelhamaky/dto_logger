@@ -2,9 +2,6 @@ import 'package:dto_logger/dto_logger.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ParseResult factories
-  // ═══════════════════════════════════════════════════════════════════════════
   group('ParseResult factories', () {
     test('ParseResult.ok stores value and marks success', () {
       final result = ParseResult.ok(42);
@@ -34,7 +31,9 @@ void main() {
       expect(result.success, isTrue);
     });
 
-    test('ParseResult.coerced stores value, warning, originalType, originalValue', () {
+    test(
+        'ParseResult.coerced stores value, warning, originalType, originalValue',
+        () {
       final result = ParseResult.coerced(42, 'String', '42');
       expect(result.value, equals(42));
       expect(result.success, isTrue);
@@ -83,9 +82,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.asInt
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asInt', () {
     // --- null ---
     test('null returns null value with success and null warning', () {
@@ -255,7 +251,8 @@ void main() {
       expect(result.success, isFalse);
     });
 
-    test('String "  123  " (with spaces) behavior depends on Dart int.tryParse', () {
+    test('String "  123  " (with spaces) behavior depends on Dart int.tryParse',
+        () {
       // Dart's int.tryParse may or may not handle leading/trailing whitespace
       final dartParse = int.tryParse('  123  ');
       final result = SafeParser.asInt('  123  ');
@@ -307,7 +304,8 @@ void main() {
       expect(result.success, isTrue);
     });
 
-    test('String with 100 chars fails with truncated preview (tests _preview)', () {
+    test('String with 100 chars fails with truncated preview (tests _preview)',
+        () {
       final longString = 'a' * 100;
       final result = SafeParser.asInt(longString);
       expect(result.value, isNull);
@@ -380,9 +378,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.asDouble
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asDouble', () {
     // --- null ---
     test('null returns null with success', () {
@@ -586,9 +581,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.asString
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asString', () {
     // --- null ---
     test('null returns null with success', () {
@@ -728,9 +720,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.asBool
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asBool', () {
     // --- null ---
     test('null returns null with success', () {
@@ -988,9 +977,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.asDateTime
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asDateTime', () {
     // --- null ---
     test('null returns null with success', () {
@@ -1167,9 +1153,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.asList
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asList', () {
     // --- null ---
     test('null returns null with success', () {
@@ -1228,8 +1211,8 @@ void main() {
     });
 
     test('List of bools with bool parser', () {
-      final result = SafeParser.asList<bool>(
-          [true, false, true], (e) => e as bool);
+      final result =
+          SafeParser.asList<bool>([true, false, true], (e) => e as bool);
       expect(result.value, equals([true, false, true]));
       expect(result.success, isTrue);
     });
@@ -1271,8 +1254,7 @@ void main() {
     });
 
     test('Map value fails', () {
-      final result =
-          SafeParser.asList<int>({'a': 1}, (e) => e as int);
+      final result = SafeParser.asList<int>({'a': 1}, (e) => e as int);
       expect(result.value, isNull);
       expect(result.success, isFalse);
     });
@@ -1291,17 +1273,16 @@ void main() {
         ],
         (e) => (e as List).cast<int>(),
       );
-      expect(result.value, equals([
-        [1, 2],
-        [3, 4],
-      ]));
+      expect(
+          result.value,
+          equals([
+            [1, 2],
+            [3, 4],
+          ]));
       expect(result.success, isTrue);
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.asMap
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asMap', () {
     // --- null ---
     test('null returns null with success', () {
@@ -1374,7 +1355,8 @@ void main() {
       expect(result.value, isEmpty);
     });
 
-    test('Map<int, String> coerced, warning mentions Map<dynamic, dynamic>', () {
+    test('Map<int, String> coerced, warning mentions Map<dynamic, dynamic>',
+        () {
       final map = <int, String>{10: 'ten', 20: 'twenty'};
       final result = SafeParser.asMap(map);
       expect(result.value, isNotNull);
@@ -1419,9 +1401,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SafeParser.inferType
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.inferType', () {
     // --- null ---
     test('null returns "String?"', () {
@@ -1466,8 +1445,7 @@ void main() {
     });
 
     test('String with nullable: false returns "String"', () {
-      expect(
-          SafeParser.inferType('hello', nullable: false), equals('String'));
+      expect(SafeParser.inferType('hello', nullable: false), equals('String'));
     });
 
     test('empty String returns "String?"', () {
@@ -1515,8 +1493,7 @@ void main() {
     });
 
     test('List with nullable: false returns without ?', () {
-      expect(
-          SafeParser.inferType([1, 2, 3], nullable: false),
+      expect(SafeParser.inferType([1, 2, 3], nullable: false),
           equals('List<int>'));
     });
 
@@ -1576,9 +1553,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // _preview (indirect tests via warning messages)
-  // ═══════════════════════════════════════════════════════════════════════════
   group('_preview (indirect via warning messages)', () {
     test('short string value appears fully in warning', () {
       final result = SafeParser.asInt('abc');
@@ -1623,9 +1597,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Edge cases and cross-cutting concerns
-  // ═══════════════════════════════════════════════════════════════════════════
   group('Edge cases', () {
     test('asInt with negative zero double (-0.0) returns 0', () {
       final result = SafeParser.asInt(-0.0);
@@ -1661,7 +1632,8 @@ void main() {
       expect(result.value!, greaterThan(0));
     });
 
-    test('asString with int returns coerced warning containing runtimeType', () {
+    test('asString with int returns coerced warning containing runtimeType',
+        () {
       final result = SafeParser.asString(42);
       expect(result.warning, contains('int'));
       expect(result.warning, contains('String'));
@@ -1753,7 +1725,8 @@ void main() {
       }
     });
 
-    test('asMap with Map<String, int> (specific value type) returned as-is', () {
+    test('asMap with Map<String, int> (specific value type) returned as-is',
+        () {
       // Map<String, int> is also a Map<String, dynamic>
       final map = <String, int>{'a': 1, 'b': 2};
       final result = SafeParser.asMap(map);
@@ -1821,9 +1794,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Consistency tests: all methods handle null consistently
-  // ═══════════════════════════════════════════════════════════════════════════
   group('Null handling consistency', () {
     test('asInt(null) returns success with null value', () {
       final result = SafeParser.asInt(null);
@@ -1879,9 +1849,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Warning message format tests
-  // ═══════════════════════════════════════════════════════════════════════════
   group('Warning message format', () {
     test('coerced warning format: "was X, parsed as Y"', () {
       final result = SafeParser.asInt('42');
@@ -1930,9 +1897,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Type safety and generics
-  // ═══════════════════════════════════════════════════════════════════════════
   group('Type safety and generics', () {
     test('ParseResult<int>.ok value is typed as int?', () {
       final ParseResult<int> result = ParseResult.ok(42);
@@ -1985,9 +1949,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Additional asInt edge cases for String numeric formats
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asInt - additional String formats', () {
     test('String "0.0" parsed via double to int 0', () {
       final result = SafeParser.asInt('0.0');
@@ -2027,9 +1988,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Additional asDateTime edge cases
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asDateTime - additional', () {
     test('String timestamp as milliseconds "1704067200000" parsed', () {
       final result = SafeParser.asDateTime('1704067200000');
@@ -2070,9 +2028,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Additional inferType edge cases
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.inferType - additional', () {
     test('negative int returns "int?"', () {
       expect(SafeParser.inferType(-42), equals('int?'));
@@ -2112,8 +2067,7 @@ void main() {
 
     test('Map<int, String> returns "Map<String, dynamic>?"', () {
       // Any Map returns Map<String, dynamic>?
-      expect(
-          SafeParser.inferType(<int, String>{1: 'one'}),
+      expect(SafeParser.inferType(<int, String>{1: 'one'}),
           equals('Map<String, dynamic>?'));
     });
 
@@ -2123,9 +2077,6 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Additional asMap coercion edge cases
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asMap - additional coercion', () {
     test('Map with bool keys coerced to string keys', () {
       final map = <dynamic, dynamic>{true: 'yes', false: 'no'};
@@ -2161,13 +2112,9 @@ void main() {
     });
   });
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // Additional asList edge cases
-  // ═══════════════════════════════════════════════════════════════════════════
   group('SafeParser.asList - additional', () {
     test('List with null elements and identity parser', () {
-      final result =
-          SafeParser.asList<dynamic>([null, 1, null], (e) => e);
+      final result = SafeParser.asList<dynamic>([null, 1, null], (e) => e);
       expect(result.value, equals([null, 1, null]));
       expect(result.success, isTrue);
     });

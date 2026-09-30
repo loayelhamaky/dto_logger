@@ -14,9 +14,6 @@ void main() {
     DtoLogConfig.deferLogging = false;
   });
 
-  // ==========================================================================
-  // LoggedMap write operations
-  // ==========================================================================
   group('LoggedMap write operations', () {
     test('[]= delegates to inner map', () async {
       final json = <String, dynamic>{'id': 1};
@@ -53,9 +50,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // LoggedMap key access tracking
-  // ==========================================================================
   group('LoggedMap key access tracking', () {
     test('direct [] access tracks the key', () async {
       final json = <String, dynamic>{'id': 1, 'name': 'test', 'extra': 'x'};
@@ -91,9 +85,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // LoggedMap._detectSuspiciousType edge cases
-  // ==========================================================================
   group('LoggedMap suspicious type detection', () {
     test('string "123" is detected as suspicious (looks like int)', () async {
       final json = <String, dynamic>{'value': '123'};
@@ -112,7 +103,8 @@ void main() {
       await Future.delayed(Duration.zero);
     });
 
-    test('string "3.14" is detected as suspicious (looks like double)', () async {
+    test('string "3.14" is detected as suspicious (looks like double)',
+        () async {
       final json = <String, dynamic>{'price': '3.14'};
       final logged = json.logged('SuspiciousDouble');
 
@@ -129,7 +121,9 @@ void main() {
       // Empty string should not trigger suspicious type
     });
 
-    test('string "NaN" is NOT suspicious (not parseable as int/double with dot)', () async {
+    test(
+        'string "NaN" is NOT suspicious (not parseable as int/double with dot)',
+        () async {
       // _detectSuspiciousType: int.tryParse("NaN") returns null
       // double.tryParse("NaN") returns NaN but doesn't contain '.'
       // So it should NOT be flagged as suspicious double
@@ -152,9 +146,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // LoggedMap with logging disabled
-  // ==========================================================================
   group('LoggedMap with logging disabled', () {
     test('logged() returns original map when disabled', () {
       DtoLogConfig.enabled = false;
@@ -165,9 +156,6 @@ void main() {
     });
   });
 
-  // ==========================================================================
-  // LoggedMap report behavior
-  // ==========================================================================
   group('LoggedMap report behavior', () {
     test('report fires once via microtask', () async {
       final json = <String, dynamic>{'id': 1};

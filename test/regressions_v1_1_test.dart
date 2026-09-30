@@ -53,7 +53,8 @@ void main() {
             json.safeInt('a');
             json.safeInt('b');
           }, 'T'));
-      expect(logs.any((l) => l.contains('? a') && l.contains('not in response')),
+      expect(
+          logs.any((l) => l.contains('? a') && l.contains('not in response')),
           isTrue);
       expect(logs.any((l) => l.contains('· b') && l.contains('null')), isTrue);
     });
@@ -82,7 +83,8 @@ void main() {
       };
       final logs = _captureLogs(() => DtoLogger.parse(json, () {
             json.safeInt('x');
-            json.safeObject('child', (m) => DtoLogger.parse(m, () => m.safeInt('a'), 'Child'));
+            json.safeObject('child',
+                (m) => DtoLogger.parse(m, () => m.safeInt('a'), 'Child'));
           }, 'Parent'));
       expect(logs.any((l) => l.contains('Child')), isTrue);
       expect(logs.any((l) => l.contains('Parent')), isTrue);
@@ -127,7 +129,9 @@ void main() {
     });
 
     test('safeValue marks a dynamic field as used', () {
-      final json = <String, dynamic>{'extra': [1]};
+      final json = <String, dynamic>{
+        'extra': [1]
+      };
       final logs = _captureLogs(
           () => DtoLogger.parse(json, () => json.safeValue('extra'), 'T'));
       expect(logs.any((l) => l.contains('not used by model')), isFalse);
@@ -186,7 +190,8 @@ void main() {
   });
 
   group('JsonToDartGenerator', () {
-    List<String> names(GeneratedClass c) => c.fields.map((f) => f.name).toList();
+    List<String> names(GeneratedClass c) =>
+        c.fields.map((f) => f.name).toList();
 
     test('keys become valid, unique Dart names', () {
       final result = JsonToDartGenerator().generate({
@@ -221,7 +226,10 @@ void main() {
     test('allNullable: false throws instead of assigning null', () {
       final code = JsonToDartGenerator(
         options: const GeneratorOptions(allNullable: false),
-      ).generate({'id': 1, 'child': {'a': 1}}, 'T').code;
+      ).generate({
+        'id': 1,
+        'child': {'a': 1}
+      }, 'T').code;
       expect(code, contains('final int id;'));
       expect(code, contains("json.safeInt('id') ?? (throw FormatException("));
       expect(code, contains("'child': child.toJson()"));
@@ -252,7 +260,8 @@ void main() {
       expect(names(result.nestedClasses.single), ['id', 'onlyInSecond']);
     });
 
-    test('a key missing from one sample is nullable even with allNullable: false',
+    test(
+        'a key missing from one sample is nullable even with allNullable: false',
         () {
       final result = JsonToDartGenerator(
         options: const GeneratorOptions(allNullable: false),
@@ -265,11 +274,21 @@ void main() {
 
     test('item class names are singularized correctly', () {
       final result = JsonToDartGenerator().generate({
-        'status': [{'a': 1}],
-        'courses': [{'a': 1}],
-        'children': [{'a': 1}],
-        'orderItems': [{'a': 1}],
-        'categories': [{'a': 1}],
+        'status': [
+          {'a': 1}
+        ],
+        'courses': [
+          {'a': 1}
+        ],
+        'children': [
+          {'a': 1}
+        ],
+        'orderItems': [
+          {'a': 1}
+        ],
+        'categories': [
+          {'a': 1}
+        ],
       }, 'T');
       expect(result.nestedClasses.map((c) => c.name),
           ['Status', 'Course', 'Child', 'OrderItem', 'Category']);
@@ -330,8 +349,8 @@ void main() {
     });
 
     test('dates do not depend on the machine timezone', () {
-      expect(DtoMock.value('created_at', 'DateTime'),
-          '2024-01-01T00:00:00.000Z');
+      expect(
+          DtoMock.value('created_at', 'DateTime'), '2024-01-01T00:00:00.000Z');
     });
 
     test('a list schema generates a list of objects', () {
