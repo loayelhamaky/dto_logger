@@ -94,9 +94,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
   // Field discovery
 
   List<_FieldInfo> _getFields(ClassElement classElement) {
-    // Nullable on purpose: some analyzer versions declare it nullable
-    // ignore: unnecessary_nullable_for_final_variable_declarations
-    final LibraryElement? library = classElement.library;
+    final library = classElement.library;
     final fields = <_FieldInfo>[];
 
     for (final field in classElement.fields) {
@@ -151,7 +149,6 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
         final valueType = defaultReader.objectValue.type;
         final intForDouble = defaultReader.isInt && field.type.isDartCoreDouble;
         if (valueType != null &&
-            library != null &&
             !intForDouble &&
             !library.typeSystem.isAssignableTo(valueType, field.type)) {
           throw InvalidGenerationSourceError(
@@ -319,7 +316,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     final arguments = _constructorArguments(
       classElement,
       byName,
-      (field) => _readExpression(field),
+      (field, _) => _readExpression(field),
       purpose: 'fromJson',
     ).map((a) => a.source);
 
@@ -349,7 +346,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
   List<_Argument> _constructorArguments(
     ClassElement classElement,
     Map<String, _FieldInfo> fieldsByName,
-    String Function(_FieldInfo field) valueFor, {
+    String Function(_FieldInfo field, String parameterName) valueFor, {
     required String purpose,
   }) {
     final constructor = classElement.unnamedConstructor;
@@ -363,13 +360,18 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     final arguments = <_Argument>[];
     var skippedPositional = false;
     for (final parameter in constructor.formalParameters) {
-      final field = fieldsByName[parameter.displayName];
+      // A named `this._nick` is called `nick`; look up the field it sets
+      final fieldName =
+          parameter is FieldFormalParameterElement
+              ? parameter.field?.displayName ?? parameter.displayName
+              : parameter.displayName;
+      final field = fieldsByName[fieldName];
       if (field == null) {
         if (parameter.isRequiredPositional || parameter.isRequiredNamed) {
           throw InvalidGenerationSourceError(
             'Constructor parameter "${parameter.displayName}" of '
             '${classElement.displayName} is required, but there is no field '
-            '"${parameter.displayName}" available for $purpose '
+            '"$fieldName" available for $purpose '
             '(is it @DtoIgnore\'d?).',
             element: parameter,
           );
@@ -377,13 +379,19 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
         if (parameter.isPositional) skippedPositional = true;
         continue;
       }
+      // copyWith parameters are named, and named parameters can't be private
+      final name = parameter.displayName.replaceFirst(RegExp(r'^_+'), '');
       if (parameter.isNamed) {
         arguments.add(
-          _Argument('${parameter.displayName}: ${valueFor(field)}', field),
+          _Argument(
+            '${parameter.displayName}: ${valueFor(field, name)}',
+            field,
+            name,
+          ),
         );
       } else if (!skippedPositional) {
         // Can't pass a positional argument after skipping an earlier one
-        arguments.add(_Argument(valueFor(field), field));
+        arguments.add(_Argument(valueFor(field, name), field, name));
       }
     }
     return arguments;
@@ -505,21 +513,20 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     final arguments = _constructorArguments(
       classElement,
       byName,
-      (field) => '${field.name} ?? this.${field.name}',
+      (field, name) => '$name ?? this.${field.name}',
       purpose: 'copyWith',
     );
-    final used = arguments.map((a) => a.field).toList();
-
     final buffer = StringBuffer();
     buffer.writeln('extension \$${className}CopyWith on $className {');
-    if (used.isEmpty) {
+    if (arguments.isEmpty) {
       buffer.writeln('  $className copyWith() => $className();');
     } else {
       buffer.writeln('  $className copyWith({');
-      for (final field in used) {
+      for (final argument in arguments) {
+        final field = argument.field;
         final typeName = field.type.getDisplayString();
         final paramType = field.isNullable ? typeName : '$typeName?';
-        buffer.writeln('    $paramType ${field.name},');
+        buffer.writeln('    $paramType ${argument.name},');
       }
       buffer.writeln('  }) {');
       buffer.writeln('    return $className(');
@@ -592,7 +599,10 @@ class _Argument {
   final String source;
   final _FieldInfo field;
 
-  _Argument(this.source, this.field);
+  /// Public parameter name, used for copyWith
+  final String name;
+
+  _Argument(this.source, this.field, this.name);
 }
 
 class _FieldInfo {

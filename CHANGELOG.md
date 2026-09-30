@@ -8,7 +8,9 @@
     build_runner: ^2.10.0
     dto_logger_generator: ^1.0.0
   ```
-  The annotations stay in `dto_logger` and the generated code is the same.
+  The annotations stay in `dto_logger` and the generated code is the same, except
+  that a field read with `safeCast` keeps nullable type arguments
+  (`Map<String, int?>` was read as `Map<String, int>`).
   `package:dto_logger/builder.dart` is gone. If your `build.yaml` configures the
   builder, rename `dto_logger:dto_logger` to `dto_logger_generator:dto_logger`.
 

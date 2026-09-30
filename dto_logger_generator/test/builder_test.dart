@@ -780,6 +780,57 @@ void main() {
     });
   });
 
+  group('private fields', () {
+    late String private;
+
+    setUpAll(
+      () async =>
+          private = await generate('''
+@DtoLog(generateCopyWith: true)
+class Profile {
+  final String? _nick;
+  final String? email;
+  Profile({this._nick, this.email});
+}
+
+@DtoLog()
+class Account {
+  final int _id;
+  Account({required this._id});
+}
+
+@DtoLog(generateCopyWith: true)
+class Pair {
+  final int? _x;
+  Pair(this._x);
+}
+'''),
+    );
+
+    test('a named this._nick is passed as nick', () {
+      expect(private, generates("nick: json.safeString('_nick')"));
+    });
+
+    test('a required named this._id is found', () {
+      expect(private, generates("id: json.safeInt('_id') ??"));
+    });
+
+    test('copyWith uses the public name', () {
+      expect(
+        private,
+        generates('Profile copyWith({String? nick, String? email})'),
+      );
+      expect(private, generates('nick: nick ?? this._nick'));
+    });
+
+    test('copyWith makes a private positional parameter public', () {
+      expect(
+        private,
+        generates('Pair copyWith({int? x}) { return Pair(x ?? this._x); }'),
+      );
+    });
+  });
+
   group('errors', () {
     test('@DtoLog on something that is not a class', () async {
       expect(
