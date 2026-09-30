@@ -1,0 +1,27 @@
+name: dto_logger_generator
+description: build_runner code generator for dto_logger's @DtoLog annotation. Generates fromJson, toJson, copyWith and equality that log nulls, missing keys and type mismatches in debug builds.
+version: 1.0.0
+repository: https://github.com/loayelhamaky/dto_logger/tree/main/dto_logger_generator
+issue_tracker: https://github.com/loayelhamaky/dto_logger/issues
+topics:
+  - json
+  - codegen
+  - build-runner
+  - dto
+  - logging
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  analyzer: '>=8.1.1 <15.0.0'
+  build: ^4.0.0
+  dto_logger: ^2.0.0
+  source_gen: ^4.0.1
+
+dev_dependencies:
+  build_runner: ^2.10.0
+  build_test: ^3.5.0
+  lints: ^5.1.0
+  logging: ^1.2.0
+  test: ^1.25.0

@@ -1,6 +1,6 @@
 builders:
   dto_logger:
-    import: "package:dto_logger/builder.dart"
+    import: "package:dto_logger_generator/dto_logger_generator.dart"
     builder_factories: ["dtoLoggerBuilder"]
     build_extensions: {".dart": [".dto_logger.g.part"]}
     auto_apply: dependents

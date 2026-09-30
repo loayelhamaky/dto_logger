@@ -1,8 +1,7 @@
 /// Code generator for @DtoLog annotation
 /// Uses build_runner and source_gen
 ///
-/// Stays on the classic analyzer element API so it works from analyzer 5.13
-/// (older Flutter projects) up to 7.x.
+/// Uses only element API members that exist from analyzer 8.1.1 through 14.x.
 library;
 
 import 'package:analyzer/dart/constant/value.dart';
@@ -12,7 +11,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-import 'src/annotations.dart';
+import 'package:dto_logger/dto_logger.dart' show DtoLog;
 
 /// Builder factory for build_runner
 Builder dtoLoggerBuilder(BuilderOptions options) =>
@@ -24,6 +23,7 @@ const _keyChecker = TypeChecker.fromUrl('$_annotationsUrl#DtoKey');
 const _defaultChecker = TypeChecker.fromUrl('$_annotationsUrl#DtoDefault');
 const _ignoreChecker = TypeChecker.fromUrl('$_annotationsUrl#DtoIgnore');
 const _requiredChecker = TypeChecker.fromUrl('$_annotationsUrl#DtoRequired');
+const _dtoLogChecker = TypeChecker.fromUrl('$_annotationsUrl#DtoLog');
 
 /// Generator for @DtoLog annotation
 ///
@@ -43,6 +43,9 @@ const _requiredChecker = TypeChecker.fromUrl('$_annotationsUrl#DtoRequired');
 /// ```
 class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
   @override
+  TypeChecker get typeChecker => _dtoLogChecker;
+
+  @override
   String generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
@@ -61,7 +64,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
       );
     }
 
-    final className = element.name;
+    final className = element.displayName;
     final generateFromJson = annotation.read('generateFromJson').boolValue;
     final generateToJson = annotation.read('generateToJson').boolValue;
     final generateCopyWith = annotation.read('generateCopyWith').boolValue;
@@ -88,9 +91,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     return buffer.toString();
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // Field discovery
-  // ═══════════════════════════════════════════════════════════════════
 
   List<_FieldInfo> _getFields(ClassElement classElement) {
     // Nullable on purpose: some analyzer versions declare it nullable
@@ -99,7 +100,10 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     final fields = <_FieldInfo>[];
 
     for (final field in classElement.fields) {
-      if (field.isStatic || field.isSynthetic) continue;
+      // Fields induced by a getter or setter point back to that accessor
+      if (field.isStatic || field.nonSynthetic is PropertyAccessorElement) {
+        continue;
+      }
 
       var ignoreFromJson = false;
       var ignoreToJson = false;
@@ -110,7 +114,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
         ignoreToJson = reader.read('toJson').boolValue;
       }
 
-      var jsonKey = field.name;
+      var jsonKey = field.displayName;
       ConstantReader? defaultReader;
       var required = false;
       String? requiredMessage;
@@ -145,45 +149,50 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
       String? defaultSource;
       if (defaultReader != null) {
         final valueType = defaultReader.objectValue.type;
-        final intForDouble =
-            defaultReader.isInt && field.type.isDartCoreDouble;
+        final intForDouble = defaultReader.isInt && field.type.isDartCoreDouble;
         if (valueType != null &&
             library != null &&
             !intForDouble &&
             !library.typeSystem.isAssignableTo(valueType, field.type)) {
           throw InvalidGenerationSourceError(
             'Default value of type '
-            '${valueType.getDisplayString(withNullability: true)} can\'t be '
-            'assigned to ${field.type.getDisplayString(withNullability: true)} '
-            '${field.name}.',
+            '${valueType.getDisplayString()} can\'t be '
+            'assigned to ${field.type.getDisplayString()} '
+            '${field.displayName}.',
             element: field,
           );
         }
-        defaultSource = intForDouble
-            ? '${defaultReader.intValue}.0'
-            : _constantSource(defaultReader, field, inConst: false);
+        defaultSource =
+            intForDouble
+                ? '${defaultReader.intValue}.0'
+                : _constantSource(defaultReader, field, inConst: false);
       }
 
-      fields.add(_FieldInfo(
-        element: field,
-        name: field.name,
-        jsonKey: jsonKey,
-        type: field.type,
-        isNullable: _isNullable(field.type),
-        defaultValue: defaultSource,
-        required: required,
-        requiredMessage: requiredMessage,
-        ignoreFromJson: ignoreFromJson,
-        ignoreToJson: ignoreToJson,
-      ));
+      fields.add(
+        _FieldInfo(
+          element: field,
+          name: field.displayName,
+          jsonKey: jsonKey,
+          type: field.type,
+          isNullable: _isNullable(field.type),
+          defaultValue: defaultSource,
+          required: required,
+          requiredMessage: requiredMessage,
+          ignoreFromJson: ignoreFromJson,
+          ignoreToJson: ignoreToJson,
+        ),
+      );
     }
 
     return fields;
   }
 
   /// Dart source for a constant annotation value.
-  String _constantSource(ConstantReader reader, Element context,
-      {required bool inConst}) {
+  String _constantSource(
+    ConstantReader reader,
+    Element context, {
+    required bool inConst,
+  }) {
     if (reader.isNull) return 'null';
     if (reader.isString) return _stringLiteral(reader.stringValue);
     if (reader.isBool) return reader.boolValue.toString();
@@ -199,15 +208,19 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     final prefix = inConst ? '' : 'const ';
     if (reader.isList) {
       final items = reader.listValue
-          .map((e) => _constantSource(ConstantReader(e), context, inConst: true))
+          .map(
+            (e) => _constantSource(ConstantReader(e), context, inConst: true),
+          )
           .join(', ');
       return '$prefix[$items]';
     }
     if (reader.isMap) {
       final entries = reader.mapValue.entries
-          .map((e) =>
-              '${_constantSource(ConstantReader(e.key), context, inConst: true)}: '
-              '${_constantSource(ConstantReader(e.value), context, inConst: true)}')
+          .map(
+            (e) =>
+                '${_constantSource(ConstantReader(e.key), context, inConst: true)}: '
+                '${_constantSource(ConstantReader(e.value), context, inConst: true)}',
+          )
           .join(', ');
       return '$prefix{$entries}';
     }
@@ -223,26 +236,31 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
   String? _enumConstantName(DartObject value) {
     final type = value.type;
     if (type is! InterfaceType || type.element is! EnumElement) return null;
-    final name = value.variable?.name ??
+    final name =
+        value.variable?.name ??
         value.getField('_name')?.toStringValue() ??
         value.getField('name')?.toStringValue();
-    return name == null ? null : '${type.element.name}.$name';
+    return name == null ? null : '${type.element.displayName}.$name';
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // Type helpers
-  // ═══════════════════════════════════════════════════════════════════
 
   bool _isNullable(DartType type) =>
       type is DynamicType ||
       type.nullabilitySuffix == NullabilitySuffix.question;
 
-  String _baseName(DartType type) =>
-      type.getDisplayString(withNullability: false);
+  /// The type without its own `?` (type arguments keep theirs).
+  String _baseName(DartType type) {
+    final name = type.getDisplayString();
+    return type.nullabilitySuffix == NullabilitySuffix.question &&
+            name.endsWith('?')
+        ? name.substring(0, name.length - 1)
+        : name;
+  }
 
   bool _isDateTime(DartType type) =>
       type is InterfaceType &&
-      type.element.name == 'DateTime' &&
+      type.element.displayName == 'DateTime' &&
       (_libraryOf(type.element)?.isDartCore ?? false);
 
   bool _isEnum(DartType type) =>
@@ -273,28 +291,27 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
 
   void _requireFromJson(DartType type, _FieldInfo field) {
     final element = (type as InterfaceType).element;
-    final hasFromJson = element.getNamedConstructor('fromJson') != null ||
+    final hasFromJson =
+        element.getNamedConstructor('fromJson') != null ||
         (element.getMethod('fromJson')?.isStatic ?? false);
     if (!hasFromJson) {
       throw InvalidGenerationSourceError(
-        '${element.name} is used by ${field.name} but has no fromJson. '
-        'Add: factory ${element.name}.fromJson(Map<String, dynamic> json) '
-        '=> _\$${element.name}FromJson(json);',
+        '${element.displayName} is used by ${field.name} but has no fromJson. '
+        'Add: factory ${element.displayName}.fromJson(Map<String, dynamic> json) '
+        '=> _\$${element.displayName}FromJson(json);',
         element: field.element,
       );
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // fromJson - top-level _$ClassNameFromJson function
-  // ═══════════════════════════════════════════════════════════════════
 
   String _generateFromJson(
     ClassElement classElement,
     List<_FieldInfo> fields,
     bool enableLogging,
   ) {
-    final className = classElement.name;
+    final className = classElement.displayName;
     final byName = {
       for (final f in fields)
         if (!f.ignoreFromJson) f.name: f,
@@ -308,7 +325,8 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
 
     final buffer = StringBuffer();
     buffer.writeln(
-        '$className _\$${className}FromJson(Map<String, dynamic> json) {');
+      '$className _\$${className}FromJson(Map<String, dynamic> json) {',
+    );
     if (enableLogging) {
       buffer.writeln('  return DtoLogger.parse(json, () => $className(');
     } else {
@@ -337,21 +355,21 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     final constructor = classElement.unnamedConstructor;
     if (constructor == null) {
       throw InvalidGenerationSourceError(
-        '${classElement.name} needs an unnamed constructor for $purpose.',
+        '${classElement.displayName} needs an unnamed constructor for $purpose.',
         element: classElement,
       );
     }
 
     final arguments = <_Argument>[];
     var skippedPositional = false;
-    for (final parameter in constructor.parameters) {
-      final field = fieldsByName[parameter.name];
+    for (final parameter in constructor.formalParameters) {
+      final field = fieldsByName[parameter.displayName];
       if (field == null) {
         if (parameter.isRequiredPositional || parameter.isRequiredNamed) {
           throw InvalidGenerationSourceError(
-            'Constructor parameter "${parameter.name}" of '
-            '${classElement.name} is required, but there is no field '
-            '"${parameter.name}" available for $purpose '
+            'Constructor parameter "${parameter.displayName}" of '
+            '${classElement.displayName} is required, but there is no field '
+            '"${parameter.displayName}" available for $purpose '
             '(is it @DtoIgnore\'d?).',
             element: parameter,
           );
@@ -361,7 +379,8 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
       }
       if (parameter.isNamed) {
         arguments.add(
-            _Argument('${parameter.name}: ${valueFor(field)}', field));
+          _Argument('${parameter.displayName}: ${valueFor(field)}', field),
+        );
       } else if (!skippedPositional) {
         // Can't pass a positional argument after skipping an earlier one
         arguments.add(_Argument(valueFor(field), field));
@@ -399,7 +418,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
       } else if (_isEnum(elementType)) {
         read = 'json.safeEnumList($key, ${_baseName(elementType)}.values)';
       } else {
-        final itemType = elementType.getDisplayString(withNullability: true);
+        final itemType = elementType.getDisplayString();
         read = 'json.safeListOf<$itemType>($key)';
       }
     } else if (_isStringDynamicMap(type)) {
@@ -420,8 +439,10 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
       return 'json.safeValue($key) == null ? $defaultValue : $read ?? $defaultValue';
     }
     if (field.required || !field.isNullable) {
-      final message = _stringLiteral(field.requiredMessage ??
-          'Required field "${field.jsonKey}" is missing or invalid');
+      final message = _stringLiteral(
+        field.requiredMessage ??
+            'Required field "${field.jsonKey}" is missing or invalid',
+      );
       return '$read ?? (throw FormatException($message))';
     }
     return read;
@@ -435,17 +456,19 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     return null;
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // toJson - top-level _$ClassNameToJson function
-  // ═══════════════════════════════════════════════════════════════════
 
   String _generateToJson(String className, List<_FieldInfo> fields) {
     final buffer = StringBuffer();
-    buffer.writeln('Map<String, dynamic> _\$${className}ToJson('
-        '$className instance) => <String, dynamic>{');
+    buffer.writeln(
+      'Map<String, dynamic> _\$${className}ToJson('
+      '$className instance) => <String, dynamic>{',
+    );
     for (final field in fields) {
-      buffer.writeln('      ${_stringLiteral(field.jsonKey)}: '
-          '${_writeExpression(field)},');
+      buffer.writeln(
+        '      ${_stringLiteral(field.jsonKey)}: '
+        '${_writeExpression(field)},',
+      );
     }
     buffer.writeln('    };');
     return buffer.toString();
@@ -474,12 +497,10 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     return value;
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // copyWith - extension (called on instances)
-  // ═══════════════════════════════════════════════════════════════════
 
   String _generateCopyWith(ClassElement classElement, List<_FieldInfo> fields) {
-    final className = classElement.name;
+    final className = classElement.displayName;
     final byName = {for (final f in fields) f.name: f};
     final arguments = _constructorArguments(
       classElement,
@@ -496,7 +517,7 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     } else {
       buffer.writeln('  $className copyWith({');
       for (final field in used) {
-        final typeName = field.type.getDisplayString(withNullability: true);
+        final typeName = field.type.getDisplayString();
         final paramType = field.isNullable ? typeName : '$typeName?';
         buffer.writeln('    $paramType ${field.name},');
       }
@@ -512,18 +533,17 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     return buffer.toString();
   }
 
-  // ═══════════════════════════════════════════════════════════════════
   // equality - extension. Extensions can't override ==, so wire it:
   //   bool operator ==(Object other) => equals(other);
   //   int get hashCode => hashValue;
-  // ═══════════════════════════════════════════════════════════════════
 
   String _generateEquality(String className, List<_FieldInfo> fields) {
     final names = fields.map((f) => f.name).toSet();
-    final other = ['other', 'that', 'o'].firstWhere(
-      (n) => !names.contains(n),
-      orElse: () => 'otherObject',
-    );
+    final other = [
+      'other',
+      'that',
+      'o',
+    ].firstWhere((n) => !names.contains(n), orElse: () => 'otherObject');
 
     final buffer = StringBuffer();
     buffer.writeln('extension \$${className}Equality on $className {');
@@ -547,7 +567,8 @@ class DtoLogGenerator extends GeneratorForAnnotation<DtoLog> {
     } else {
       // Object.hash accepts at most 20 values
       buffer.writeln(
-          'Object.hashAll([${fields.map((f) => f.name).join(', ')}]);');
+        'Object.hashAll([${fields.map((f) => f.name).join(', ')}]);',
+      );
     }
     buffer.writeln('}');
     return buffer.toString();

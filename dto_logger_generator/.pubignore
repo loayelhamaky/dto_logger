@@ -1,0 +1,7 @@
+# Replaces .gitignore when publishing, so it repeats its entries.
+.dart_tool/
+build/
+pubspec.lock
+
+# Points dto_logger at this repository; only for local development
+pubspec_overrides.yaml

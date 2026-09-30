@@ -1,3 +1,27 @@
+## 2.0.0
+
+### Breaking
+- The `@DtoLog` builder moved to a new package, `dto_logger_generator`.
+  If you use `@DtoLog`, add it next to `build_runner`:
+  ```yaml
+  dev_dependencies:
+    build_runner: ^2.10.0
+    dto_logger_generator: ^1.0.0
+  ```
+  The annotations stay in `dto_logger` and the generated code is the same.
+  `package:dto_logger/builder.dart` is gone. If your `build.yaml` configures the
+  builder, rename `dto_logger:dto_logger` to `dto_logger_generator:dto_logger`.
+
+### Changed
+- `dto_logger` has no dependencies now. Before, its `source_gen ^1.5.0` made it
+  impossible to add next to current `json_serializable` or `freezed`, which
+  need `source_gen` 3 or newer.
+- `pubspec.yaml` links to the repository and issue tracker.
+
+### Fixed
+- `DtoMock` prices and coordinates had floating point noise
+  (`29.990000000000002`). They are exact now (`29.99`).
+
 ## 1.1.1
 
 - LICENSE: copyright holder is now the full name (Loay Elhamaky). No code changes.

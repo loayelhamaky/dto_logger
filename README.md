@@ -10,10 +10,15 @@ It never throws on bad data, except for required fields: non-nullable fields wit
 
 ```yaml
 dependencies:
-  dto_logger: ^1.1.1
+  dto_logger: ^2.0.0
+```
 
+Only if you use `@DtoLog` code generation, also add:
+
+```yaml
 dev_dependencies:
-  build_runner: ^2.4.0   # only if you use @DtoLog code generation
+  build_runner: ^2.10.0
+  dto_logger_generator: ^1.0.0
 ```
 
 ## Four ways to use it
@@ -77,9 +82,10 @@ class User {
 ```
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+dart run build_runner build
 ```
 
+The builder is in the separate `dto_logger_generator` package (see Installation).
 Nested classes must have a `fromJson` factory and a `toJson` method.
 The builder stops with a clear error if one is missing.
 
@@ -223,10 +229,12 @@ The same seed gives the same data on every machine.
 
 ## Dependencies
 
-`analyzer`, `build` and `source_gen` are regular dependencies because the `@DtoLog` builder needs them.
-They are not compiled into your app, but they do take part in version solving.
-The range starts at analyzer 5.13 so older Flutter projects still resolve.
-`source_gen ^1.5.0` caps analyzer below 7, so in practice you get analyzer 5.13 to 6.x.
+`dto_logger` has no dependencies, so it resolves in any Dart 3 project,
+next to `json_serializable`, `freezed` or any analyzer version.
+
+The `@DtoLog` builder needs `analyzer`, `build` and `source_gen`, so it lives in
+`dto_logger_generator`, a dev dependency. It supports analyzer 8.1.1 to 14.x (Dart 3.7+).
+Projects that can't use it still get everything else: safe readers, `.logged()`, the CLI and mock data.
 
 ## License
 

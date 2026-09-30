@@ -1,0 +1,13 @@
+# Replaces .gitignore when publishing, so it repeats its entries.
+.dart_tool/
+.packages
+build/
+pubspec.lock
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Separate package, published on its own
+/dto_logger_generator/*
+tool/

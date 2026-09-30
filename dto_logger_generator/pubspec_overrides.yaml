@@ -1,0 +1,4 @@
+# Develop against the dto_logger in this repository
+dependency_overrides:
+  dto_logger:
+    path: ..
