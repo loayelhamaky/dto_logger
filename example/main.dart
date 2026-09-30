@@ -133,25 +133,23 @@ void testApiResponses() {
   print(
       '└─────────────────────────────────────────────────────────────────────┘');
 
-  // ─────────────────────────────────────────────────────────────────────────
   // Example 1: User API with type coercion warnings
-  // ─────────────────────────────────────────────────────────────────────────
   print('\n${"─" * 70}');
   print('📡 GET /api/users/123');
   print('─' * 70);
 
   final userJson = {
-    'userId': '456', // ⚠️ String instead of int
+    'userId': '456', // String instead of int
     'user_name': 'Ahmed Mohamed',
-    'email': null, // ⚠️ null
-    'is_active': 'true', // ⚠️ String instead of bool
+    'email': null, // null
+    'is_active': 'true', // String instead of bool
     'age': 28,
-    'balance': '1500.50', // ⚠️ String instead of double
+    'balance': '1500.50', // String instead of double
     'created_at': 1704067200, // Unix timestamp
     'profile': {
       'avatar': 'https://example.com/avatar.png',
-      'bio': null, // ⚠️ null
-      'followers': '1000', // ⚠️ String instead of int
+      'bio': null, // null
+      'followers': '1000', // String instead of int
     },
   };
 
@@ -159,9 +157,7 @@ void testApiResponses() {
   print(
       '→ Result: User ${user.userName}, balance: \$${user.balance}, active: ${user.isActive}');
 
-  // ─────────────────────────────────────────────────────────────────────────
   // Example 2: Order API with nested objects and lists
-  // ─────────────────────────────────────────────────────────────────────────
   print('\n${"─" * 70}');
   print('📡 GET /api/orders/789');
   print('─' * 70);
@@ -196,9 +192,7 @@ void testApiResponses() {
   print(
       '→ Result: Order #${order.orderNumber}, Total: \$${order.total}, Items: ${order.items?.length ?? 0}');
 
-  // ─────────────────────────────────────────────────────────────────────────
   // Example 3: API response with no issues
-  // ────────────────────────────────────────────────────────────────────────
   print('\n${"─" * 70}');
   print('📡 GET /api/settings (Perfect data - no warnings)');
   print('─' * 70);
@@ -214,9 +208,7 @@ void testApiResponses() {
   final settings = SettingsResponse.fromJson(settingsJson);
   print('→ Result: theme=${settings.theme}, lang=${settings.language}');
 
-  // ─────────────────────────────────────────────────────────────────────────
   // Example 4: Product with missing/bad data
-  // ─────────────────────────────────────────────────────────────────────────
   print('\n${"─" * 70}');
   print('📡 GET /api/products/999 (Bad API response)');
   print('─' * 70);
@@ -224,24 +216,22 @@ void testApiResponses() {
   final productJson = {
     'id': 999,
     // 'name': MISSING!
-    'price': 'not_a_number', // ⚠️ Can't parse
-    'inStock': 'yes', // ⚠️ String "yes" → bool
-    'rating': null, // ⚠️ null
+    'price': 'not_a_number', // Can't parse
+    'inStock': 'yes', // String "yes" → bool
+    'rating': null, // null
   };
 
   final product = ProductResponse.fromJson(productJson);
   print(
       '→ Result: Product ID=${product.id}, name=${product.name ?? "MISSING"}, price=${product.price}');
 
-  // ─────────────────────────────────────────────────────────────────────────
   // Example 5: List of items
-  // ─────────────────────────────────────────────────────────────────────────
   print('\n${"─" * 70}');
   print('📡 GET /api/notifications');
   print('─' * 70);
 
   final notificationsJson = {
-    'count': '5', // ⚠️ String instead of int
+    'count': '5', // String instead of int
     'unread': 3,
     'notifications': [
       {'id': 1, 'title': 'Welcome!', 'read': false},
@@ -249,8 +239,8 @@ void testApiResponses() {
         'id': '2',
         'title': 'New message',
         'read': 'true'
-      }, // ⚠️ String id, String bool
-      {'id': 3, 'title': null, 'read': 0}, // ⚠️ null title, int bool
+      }, // String id, String bool
+      {'id': 3, 'title': null, 'read': 0}, // null title, int bool
     ],
   };
 

@@ -75,7 +75,7 @@ class DtoMock {
   ///
   /// ```dart
   /// DtoMock.value('email', 'String');      // → 'user0@test.com'
-  /// DtoMock.value('age', 'int');            // → 25
+  /// DtoMock.value('age', 'int');            // → 18
   /// DtoMock.value('price', 'double');       // → 9.99
   /// DtoMock.value('is_active', 'bool');     // → true
   /// DtoMock.value('created_at', 'DateTime');// → '2024-01-01T00:00:00.000Z'
