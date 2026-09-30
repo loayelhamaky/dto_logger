@@ -119,6 +119,14 @@ void main() {
   });
 
   group('SafeParser.asDateTime edge cases', () {
+    test('a timestamp string is reported as String, not int', () {
+      final result = SafeParser.asDateTime('1704067200');
+      expect(result.value, DateTime.fromMillisecondsSinceEpoch(1704067200000));
+      expect(result.warning, contains('String (seconds)'));
+      expect(SafeParser.asDateTime('1704067200000').warning,
+          contains('String (milliseconds)'));
+    });
+
     test('asDateTime(-86400) - before epoch, treated as seconds', () {
       final result = SafeParser.asDateTime(-86400);
       expect(result.success, isTrue);

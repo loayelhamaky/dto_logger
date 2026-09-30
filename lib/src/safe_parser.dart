@@ -248,11 +248,12 @@ class SafeParser {
       int timestamp, dynamic original) {
     // Above 10000000000 (year ~2286 in seconds) it must be milliseconds
     final isMillis = timestamp > 10000000000;
+    final source = original is String ? 'String' : 'int';
     try {
       return ParseResult.coerced(
         DateTime.fromMillisecondsSinceEpoch(
             isMillis ? timestamp : timestamp * 1000),
-        isMillis ? 'int (milliseconds)' : 'int (seconds)',
+        '$source (${isMillis ? 'milliseconds' : 'seconds'})',
         original,
       );
     } on RangeError {

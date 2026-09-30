@@ -65,6 +65,15 @@ void main() {
       expect(result['image'] as String, contains('.png'));
     });
 
+    test('image and avatar URLs point to images', () {
+      for (final field in ['avatar_url', 'image_url', 'photoUrl']) {
+        expect(DtoMock.value(field, 'String') as String, endsWith('.png'),
+            reason: field);
+      }
+      expect(DtoMock.value('video_url', 'String') as String, endsWith('.mp4'));
+      expect(DtoMock.value('profile_url', 'String'), 'https://example.com/0');
+    });
+
     test('avatar field generates image URL', () {
       final result = DtoMock.generate({'avatar': 'String'});
       expect(result['avatar'] as String, contains('.png'));

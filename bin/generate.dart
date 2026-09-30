@@ -378,7 +378,7 @@ void _printHeader() {
   print(
       '${AnsiColors.cyan}╔════════════════════════════════════════╗${AnsiColors.reset}');
   print(
-      '${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}DTO Logger - Class Generator${AnsiColors.reset}     ${AnsiColors.cyan}║${AnsiColors.reset}');
+      '${AnsiColors.cyan}║${AnsiColors.reset}      ${AnsiColors.bold}DTO Logger - Class Generator${AnsiColors.reset}      ${AnsiColors.cyan}║${AnsiColors.reset}');
   print(
       '${AnsiColors.cyan}╚════════════════════════════════════════╝${AnsiColors.reset}');
   print('');

@@ -148,7 +148,7 @@ void main(List<String> args) {
             '${bodyIndent}return $expression;\n'
             '$baseIndent}';
 
-        content = content.substring(0, arrowOffset) +
+        content = content.substring(0, arrowOffset).trimRight() +
             replacement +
             content.substring(arrowOffset + 2 + semiIndex + 1);
 
@@ -178,8 +178,7 @@ void main(List<String> args) {
   print('');
   print(
       '${AnsiColors.cyan}╔════════════════════════════════════════╗${AnsiColors.reset}');
-  print(
-      '${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}DTO Logger — Inject ${dryRun ? "Preview" : "Complete"}${AnsiColors.reset}     ${AnsiColors.cyan}║${AnsiColors.reset}');
+  print(_boxLine('DTO Logger — Inject ${dryRun ? 'Preview' : 'Complete'}'));
   print(
       '${AnsiColors.cyan}╚════════════════════════════════════════╝${AnsiColors.reset}');
   print('');
@@ -373,12 +372,16 @@ void _printHeader() {
   print('');
   print(
       '${AnsiColors.cyan}╔════════════════════════════════════════╗${AnsiColors.reset}');
-  print(
-      '${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}DTO Logger — Inject Tool${AnsiColors.reset}          ${AnsiColors.cyan}║${AnsiColors.reset}');
+  print(_boxLine('DTO Logger — Inject Tool'));
   print(
       '${AnsiColors.cyan}╚════════════════════════════════════════╝${AnsiColors.reset}');
   print('');
 }
+
+/// One line of the 40-wide header box, title padded to fit.
+String _boxLine(String title) =>
+    '${AnsiColors.cyan}║${AnsiColors.reset}     ${AnsiColors.bold}$title'
+    '${AnsiColors.reset}${' ' * (35 - title.length)}${AnsiColors.cyan}║${AnsiColors.reset}';
 
 void _printHelp() {
   print('''

@@ -227,9 +227,6 @@ class DtoMock {
     }
 
     // URL patterns
-    if (f.has('url') || f.has('link') || f.has('href')) {
-      return 'https://example.com/$seed';
-    }
     if (f.has('image') ||
         f.has('avatar') ||
         f.has('photo') ||
@@ -240,6 +237,9 @@ class DtoMock {
     if (f.has('video')) return 'https://example.com/videos/$seed.mp4';
     if (f.has('website')) return 'https://example$seed.com';
     if (f.has('icon')) return 'https://example.com/icons/$seed.svg';
+    if (f.has('url') || f.has('link') || f.has('href')) {
+      return 'https://example.com/$seed';
+    }
 
     // Address (IP addresses first: "ip_address" is not a street)
     if (f.has('ip')) return '192.168.1.${seed % 256}';
