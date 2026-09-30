@@ -195,6 +195,18 @@ void main() {
       expect(result['price'] as double, greaterThan(0));
     });
 
+    test('prices and coordinates have no floating point noise', () {
+      for (var seed = 0; seed < 50; seed++) {
+        for (final field in ['price', 'lat', 'lng']) {
+          final text = DtoMock.value(field, 'double', seed: seed).toString();
+          final decimals = text.contains('.') ? text.split('.')[1].length : 0;
+          expect(decimals, lessThanOrEqualTo(field == 'price' ? 2 : 4),
+              reason: '$field seed $seed gave $text');
+        }
+      }
+      expect(DtoMock.value('price', 'double', seed: 2), 29.99);
+    });
+
     test('lat field generates latitude-like value', () {
       final result = DtoMock.generate({'lat': 'double'});
       final lat = result['lat'] as double;

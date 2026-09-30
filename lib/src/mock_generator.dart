@@ -160,12 +160,13 @@ class DtoMock {
   }
 
   static double _smartDouble(_FieldWords f, int seed) {
+    // Integer math, then one division: 9.99 + 2 * 10 is 29.990000000000002
     if (f.has('price') || f.has('cost') || f.has('amount')) {
-      return 9.99 + seed * 10;
+      return (999 + seed * 1000) / 100;
     }
-    if (f.has('lat') || f.has('latitude')) return 37.7749 + seed * 0.01;
+    if (f.has('lat') || f.has('latitude')) return (377749 + seed * 100) / 10000;
     if (f.has('lng') || f.has('lon') || f.has('longitude')) {
-      return -122.4194 + seed * 0.01;
+      return (-1224194 + seed * 100) / 10000;
     }
     if (f.has('percent') || f.has('percentage') || f.has('ratio')) {
       return (seed % 100) / 100.0;
