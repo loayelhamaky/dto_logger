@@ -9,3 +9,6 @@ pubspec.lock
 *.iml
 .vscode/
 .DS_Store
+
+# Personal notes
+notes/
