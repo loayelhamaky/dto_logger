@@ -21,6 +21,14 @@
 ### Fixed
 - `DtoMock` prices and coordinates had floating point noise
   (`29.990000000000002`). They are exact now (`29.99`).
+- `DtoMock` gave `avatar_url` and `image_url` a plain page URL. They get image URLs now.
+- A timestamp sent as a string (`"1704067200"`) was reported as `was int (seconds)`.
+  It now says `was String (seconds)`.
+- `inject` left a double space (`json)  {`) when it turned an `=>` fromJson into a block.
+- The CLI header boxes were misaligned.
+
+### Docs
+- README starts with a one-minute quick start.
 
 ## 1.1.1
 

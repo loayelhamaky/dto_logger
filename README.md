@@ -6,6 +6,54 @@ For every model you parse, it shows what the API actually sent:
 nulls, missing keys, type mismatches, coerced values, and fields your model never reads.
 It never throws on bad data, except for required fields: non-nullable fields without a default, or fields marked required.
 
+## Try it in one minute
+
+**1.** Add the package:
+
+```bash
+flutter pub add dto_logger
+```
+
+**2.** Open any model you already have and add one line at the start of its `fromJson`:
+
+```dart
+import 'package:dto_logger/dto_logger.dart';
+
+factory User.fromJson(Map<String, dynamic> json) {
+  json = json.logged(); // add this
+  return User(id: json['id'] as int?, name: json['name'] as String?);
+}
+```
+
+**3.** Run the app in debug and open the screen that loads it.
+If the API sent `{"id": 7, "name": null, "phone": "0100"}`, the console shows:
+
+```
+╔╣ + User ║ 1 extra field ║ 7565µs
+╟ · name  : null
+╟ + phone : not used by model
+╚════════════════════════════════════════════════════════════════════════════════
+```
+
+Nothing is printed in release builds.
+
+### On a whole feature
+
+Point the CLI at the feature's models folder. It adds that line to every `fromJson` in it:
+
+```bash
+dart run dto_logger:inject --dir lib/features/auth/data/models --dry-run   # preview
+dart run dto_logger:inject --dir lib/features/auth/data/models             # apply
+```
+
+### From a JSON response
+
+Save the response to a file and generate the model classes:
+
+```bash
+dart run dto_logger:generate -i user_response.json -o lib/features/auth/data/models
+```
+
 ## Installation
 
 ```yaml
