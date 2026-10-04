@@ -5,7 +5,8 @@
 ///
 /// Usage:
 ///   dart run dto_logger:inject
-///   dart run dto_logger:inject --dir lib/models/
+///   dart run dto_logger:inject lib/models/
+///   dart run dto_logger:inject lib/models/user.dart
 ///   dart run dto_logger:inject --dry-run
 ///   dart run dto_logger:inject --help
 library;
@@ -15,7 +16,7 @@ import 'dart:io';
 import 'package:dto_logger/dto_logger.dart';
 
 void main(List<String> args) {
-  String? directory;
+  String? path;
   bool dryRun = false;
   bool showHelp = false;
 
@@ -24,9 +25,11 @@ void main(List<String> args) {
     if (arg == '--help' || arg == '-h') {
       showHelp = true;
     } else if (arg == '--dir' || arg == '-d') {
-      if (i + 1 < args.length) directory = args[++i];
+      if (i + 1 < args.length) path = args[++i];
     } else if (arg == '--dry-run') {
       dryRun = true;
+    } else if (!arg.startsWith('-')) {
+      path = arg;
     }
   }
 
@@ -35,7 +38,7 @@ void main(List<String> args) {
     return;
   }
 
-  final targetDir = directory ?? 'lib/';
+  final target = path ?? 'lib/';
 
   _printHeader();
 
@@ -44,10 +47,14 @@ void main(List<String> args) {
         '${AnsiColors.yellow}DRY RUN — no files will be modified${AnsiColors.reset}\n');
   }
 
-  final dir = Directory(targetDir);
-  if (!dir.existsSync()) {
-    print(
-        '${AnsiColors.red}✗ Directory not found: $targetDir${AnsiColors.reset}');
+  final List<File> candidates;
+  if (FileSystemEntity.isFileSync(target)) {
+    candidates = [File(target)];
+  } else if (Directory(target).existsSync()) {
+    candidates =
+        Directory(target).listSync(recursive: true).whereType<File>().toList();
+  } else {
+    print('${AnsiColors.red}✗ Not found: $target${AnsiColors.reset}');
     exit(1);
   }
 
@@ -60,9 +67,7 @@ void main(List<String> args) {
   int importsAdded = 0;
   final modifiedFiles = <String>[];
 
-  final files = dir
-      .listSync(recursive: true)
-      .whereType<File>()
+  final files = candidates
       .where((f) =>
           f.path.endsWith('.dart') &&
           !f.path.endsWith('.g.dart') &&
@@ -71,7 +76,7 @@ void main(List<String> args) {
       .toList();
 
   filesScanned = files.length;
-  print('Scanning $filesScanned Dart files in $targetDir...\n');
+  print('Scanning $filesScanned Dart files in $target...\n');
 
   for (final file in files) {
     var content = file.readAsStringSync();
@@ -217,7 +222,7 @@ void main(List<String> args) {
         '${AnsiColors.dim}All fromJson methods already have logging.${AnsiColors.reset}\n');
   } else if (fromJsonFound == 0) {
     print(
-        '${AnsiColors.dim}No fromJson methods found in $targetDir${AnsiColors.reset}\n');
+        '${AnsiColors.dim}No fromJson methods found in $target${AnsiColors.reset}\n');
   }
 }
 
@@ -388,11 +393,13 @@ void _printHelp() {
 ${AnsiColors.bold}DTO Logger — Inject Tool${AnsiColors.reset}
 
 ${AnsiColors.cyan}USAGE:${AnsiColors.reset}
-  dart run dto_logger:inject [options]
+  dart run dto_logger:inject [path] [options]
+
+  path is a folder or a single .dart file (default: lib/)
 
 ${AnsiColors.cyan}OPTIONS:${AnsiColors.reset}
   -h, --help            Show this help message
-  -d, --dir <path>      Directory to scan (default: lib/)
+  -d, --dir <path>      Same as passing the path
   --dry-run             Preview changes without modifying files
 
 ${AnsiColors.cyan}EXAMPLES:${AnsiColors.reset}
@@ -402,8 +409,11 @@ ${AnsiColors.cyan}EXAMPLES:${AnsiColors.reset}
   ${AnsiColors.dim}# Preview what would change${AnsiColors.reset}
   dart run dto_logger:inject --dry-run
 
-  ${AnsiColors.dim}# Target a specific directory${AnsiColors.reset}
-  dart run dto_logger:inject --dir lib/models/
+  ${AnsiColors.dim}# One folder${AnsiColors.reset}
+  dart run dto_logger:inject lib/features/auth/data/models
+
+  ${AnsiColors.dim}# One file${AnsiColors.reset}
+  dart run dto_logger:inject lib/models/user.dart
 
 ${AnsiColors.cyan}WHAT IT DOES:${AnsiColors.reset}
   Finds every fromJson(Map<String, dynamic> json) in your project
