@@ -1,6 +1,6 @@
 name: dto_logger
 description: Debug-only logging and safe type coercion for JSON DTOs in Flutter/Dart. Generate classes from JSON, see nulls, missing keys, type mismatches and unused fields per model.
-version: 2.0.1
+version: 2.1.0
 repository: https://github.com/loayelhamaky/dto_logger
 issue_tracker: https://github.com/loayelhamaky/dto_logger/issues
 topics:
@@ -12,6 +12,16 @@ topics:
 screenshots:
   - description: An API sends "42" instead of 42. dto_logger reads it safely and reports every field per model.
     path: doc/screenshot.png
+  - description: Every kind of log line in one box, converted, couldn't read, missing, null and unused fields, plus a clean parse.
+    path: doc/screens/report.png
+  - description: Safe readers turn "42" into 42 without a crash, and one box lists every converted, null, invalid, missing and unused field.
+    path: doc/screens/safe_readers.png
+  - description: One command adds json = json.logged(); to every fromJson in a folder or a file, plus the import.
+    path: doc/screens/inject.png
+  - description: dart run dto_logger:generate --input order.json writes typed model classes, with nested objects as their own classes.
+    path: doc/screens/generate.png
+  - description: A nullable field gets null, a field with a default gets the default, and a required one gets a clear error.
+    path: doc/screens/three_cases.png
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

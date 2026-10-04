@@ -9,8 +9,15 @@ pubspec.lock
 .DS_Store
 notes/
 
-# Shown in the README from GitHub; too big to ship in the package
+# Shown in the README from GitHub, so they don't need to ship in the package.
+# The ones listed under screenshots: in pubspec.yaml must stay in.
 doc/demo.gif
+doc/screens/*
+!doc/screens/report.png
+!doc/screens/safe_readers.png
+!doc/screens/inject.png
+!doc/screens/generate.png
+!doc/screens/three_cases.png
 
 # Separate package, published on its own
 /dto_logger_generator/*

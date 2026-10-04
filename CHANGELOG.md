@@ -1,3 +1,11 @@
+## 2.1.0
+
+- `inject` takes a single file as well as a folder, with or without `--dir`:
+  `dart run dto_logger:inject lib/models/user.dart`.
+- README: organized by use case, with a screenshot of the real output under
+  each feature. The full demo moved to a collapsed section.
+- Package page: more screenshots.
+
 ## 2.0.1
 
 - README: a demo of every feature at the top.
