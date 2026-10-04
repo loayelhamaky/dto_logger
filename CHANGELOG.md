@@ -1,3 +1,7 @@
+## 2.1.1
+
+- README: a numbered list of what the package does, linking to each section.
+
 ## 2.1.0
 
 - `inject` takes a single file as well as a folder, with or without `--dir`:

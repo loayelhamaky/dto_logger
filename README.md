@@ -1,15 +1,21 @@
 # DTO Logger
 
-Your API sends `"42"` instead of `42`, or `null` where you don't expect it.
-dto_logger reads JSON safely and shows, for every model, exactly what the API sent.
-Logs appear in debug builds only.
+Safe JSON parsing and per-model debug logs for Flutter and Dart. It does ten things:
+
+1. **[Safe readers](#safe-readers).** `json.safeInt('id')` turns `"42"` into `42`, `"yes"` into `true` and Unix time into a `DateTime`. A value that can't be read becomes `null` instead of a crash.
+2. **[A report for every model](#reading-the-report).** Nulls, missing keys, converted types, invalid values and fields the model never reads, each marked.
+3. **[One line for the models you already have](#try-it-in-one-minute).** Add `json = json.logged();` to any `fromJson`.
+4. **[One command for a folder or a file](#you-already-have-models).** `dart run dto_logger:inject` adds that line for you.
+5. **[Models from a JSON response](#you-have-a-json-response-but-no-model).** `dart run dto_logger:generate` writes the classes.
+6. **[Code generation](#you-prefer-code-generation).** `@DtoLog` writes `fromJson`, `toJson`, `copyWith` and equality.
+7. **[You decide what missing values become](#missing-or-broken-values).** `null`, a default, or a clear error.
+8. **[Big lists stay readable](#big-lists).** Repeated reports are summed up in one line.
+9. **[Test data](#test-data).** Realistic JSON from a schema with `DtoMock`.
+10. **[Debug only, no dependencies](#dependencies).** Release builds skip all logging, and the package installs next to `json_serializable` and `freezed`.
+
+Each one is explained below, with a screenshot of the real output.
 
 ![One report per model: converted values, values that can't be read, missing keys, nulls and unused fields](https://raw.githubusercontent.com/loayelhamaky/dto_logger/main/doc/screens/report.png)
-
-- **No crash on bad JSON.** `json.safeInt('id')` turns `"42"` into `42`. A value that can't be read becomes `null` and is logged.
-- **One report per model.** Nulls, missing keys, converted types and fields your model never reads.
-- **Works with the models you have.** One line in `fromJson`, or one command for a whole folder.
-- **No model yet?** Generate it from a JSON response.
 
 ## Try it in one minute
 
